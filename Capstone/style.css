@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+a {
+    color: #08b140;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: red underline;
+}
+
+b {
+    font-size: 1.5em;
+}
+
+br {
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-width:700px) 
+{
+   
+}
+
+@media only screen and (min-width:1366.1px) 
+{
+   
+}

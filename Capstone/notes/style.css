@@ -1,0 +1,65 @@
+ .noteList li{
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+  
+ .notes p,
+ .notes input,
+ .noteList li{
+    font-weight: 300;
+    font-size: 14px;
+  }
+  
+ .notes p{
+    border-bottom: solid 1px rgba(255,255,255,0.4);
+  }
+  
+ .notes input{
+    background-color: #F48989;
+    color: #ffffff;
+    border: none;
+    width: 200px;
+  }
+  
+ .addNote,
+ .removeNote{
+    float: right;
+    color: rgba(206, 23, 23, 0.4);
+    font-weight: bold;
+    margin-left: 20px;
+  }
+  
+ .addNote:hover,
+ .removeNote:hover{
+    color: #f70404;
+  }
+  
+ .addNote{
+    font-size: 16px;
+  }
+
+  body{
+    margin: 20px;
+    background-color: #EEEDE9;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 96.5%;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  
+  input{
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, p{
+    margin-bottom: 10px;
+  }
+  
+  p{
+    line-height: 20px;
+  }
+  
+  a{
+    text-decoration: none;
+    color: #FF462B;
+  }
