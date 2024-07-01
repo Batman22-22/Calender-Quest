@@ -9,13 +9,25 @@ body {
   height: 100vh;
 }
 
+#pic {
+  background-image: url(../fundraising-calendar.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 5.5% 10% 7% 10%;
+  border-radius: 10px;
+}
+
+
 h1 {
   color: #ca2929;
   text-align: center;
+  text-shadow: -1px -1px 3px #64a35c;
 }
 
 #title{
   font-size: 80px;
+  text-shadow: -3px -2px 3px rgb(0, 0, 0);
 }
 
 .main-box {
