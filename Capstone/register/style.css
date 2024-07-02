@@ -6,11 +6,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  padding: 15vw;
   height: 100vh;
 }
 
 #pic {
-  background-image: url(../fundraising-calendar.jpg);
+  background-image: url(../Calendar_Image.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -67,7 +69,7 @@ input[type="submit"]:hover {
 }
 
 footer {
-  position: absolute;
+  position: relative;
   bottom: 10px;
   width: 100%;
   text-align: center;

@@ -6,6 +6,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  padding: 10vw;
   height: 100vh;
 }
 
@@ -17,7 +19,6 @@ body {
   padding: 5.5% 10% 7% 10%;
   border-radius: 10px;
 }
-
 
 h1 {
   color: #ca2929;
@@ -67,7 +68,7 @@ input[type="submit"]:hover {
 }
 
 footer {
-  position: absolute;
+  position:relative;
   bottom: 10px;
   width: 100%;
   text-align: center;
