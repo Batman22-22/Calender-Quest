@@ -4,6 +4,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 5vw;
 }
 
 div {
@@ -50,7 +51,7 @@ button:hover {
 }
 
 footer {
-    position: absolute;
+    position: relative;
     bottom: 10px;
     width: 100%;
     text-align: center;
@@ -63,7 +64,7 @@ footer {
     background-size: cover;
     background-position: center;
     padding: 5.5% 10% 7% 10%;
-    margin-top: 15%;
+    /* margin-top: 15%; */
     border-radius: 10px;
   }
 

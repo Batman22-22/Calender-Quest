@@ -8,22 +8,35 @@
 </head>
 <body>
     <div class="profile-container">
-        <div class="profile-header">
-            <img src="#" class="profile-picture">
-            <h1 class="user-name">Lorem ipsum</h1>
-            <p class="user-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-        <div class="profile-details">
-            <h2>About</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
-            
-            <h2>Contact Information</h2>
-            <ul>
-                <li>Email: Loremipsum@Lorem.gov</li>
-                <li>Phone: (123) 456-7890</li>
-                <li>Location: Glassboro, NJ</li>
-            </ul>
-        </div>
+        <form id="profile-form">
+            <div class="profile-header">
+                <img id="profile-picture" src="#" class="profile-picture">
+                <input type="file" id="upload-picture" accept="image/*">
+                <h1>
+                    Username
+                    <input type="text" id="user-name" class="user-name" value="Lorem ipsum">
+                </h1>
+                <p>
+                    Bio
+                    <textarea id="user-bio" class="user-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
+                </p>
+            </div>
+            <div class="profile-details">
+                <h2>About</h2>
+                <p>
+                    <textarea id="about" class="about">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</textarea>
+                </p>
+                
+                <h2>Contact Information</h2>
+                <ul>
+                    <li>Email: <input type="email" id="user-email" value="Loremipsum@Lorem.gov"></li>
+                    <li>Phone: <input type="tel" id="user-phone" value="(123) 456-7890"></li>
+                    <li>Location: <input type="text" id="user-location" value="Glassboro, NJ"></li>
+                </ul>
+            </div>
+            <button type="submit">Save</button>
+        </form>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>

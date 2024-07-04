@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    margin: 0;
+    margin: 15vw;
     padding: 0;
     display: flex;
     justify-content: center;
@@ -32,12 +32,19 @@ body {
     background-color: white;
 }
 
-.user-name {
-    color: red;
+#upload-picture {
+    display: block;
+    margin: 10px auto;
 }
 
-.user-bio {
+.user-name, .user-bio, .about {
+    color: red;
+    width: 100%;
+    border: none;
+    text-align: center;
+}
 
+.user-bio, .about {
     font-style: italic;
 }
 
@@ -47,16 +54,38 @@ body {
 
 .profile-details ul {
     list-style-type: none;
+    padding: 0;
 }
 
-@media only screen and (max-width:700px) 
-{
-   
+.profile-details ul li {
+    margin: 10px 0;
 }
 
-@media only screen and (min-width:1366.1px) 
-{
-   
+input[type="text"], input[type="email"], input[type="tel"], textarea {
+    width: 100%;
+    padding: 5px;
+    margin: 5px 0;
+    box-sizing: border-box;
 }
 
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
 
+button:hover {
+    background-color: #45a049;
+}
+
+@media only screen and (max-width: 700px) {
+   /* Your responsive styles */
+}
+
+@media only screen and (min-width: 1366.1px) {
+   /* Your responsive styles */
+}

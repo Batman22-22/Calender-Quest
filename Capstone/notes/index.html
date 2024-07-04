@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Notes</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1>this is filler text</h1>
-    <div class="notes">
-        <p>
-          <input type="text" value="" placeholder="new note"/>
-          <a href="#" title="Add note" class="addNote animate">+</a>
-        </p>
-        <ul class="noteList">
-          <li>Headbutt a lion<a href="#" title="Remove note" class="removeNote animate">x</a></li>
-        </ul>
-      </div>
+    <div class="container">
+        <h1>Notes</h1>
+        <textarea id="note-input" placeholder="Type your note here..."></textarea>
+        <button id="save-button">Save Note</button>
+        <div id="notes-container"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
+
+

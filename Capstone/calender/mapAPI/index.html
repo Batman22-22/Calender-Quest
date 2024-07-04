@@ -1,55 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule an Event</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
 
-    <script
-        src=https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync
-        defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync" defer></script>
 </head>
-
 <body>
-<div id="blankDiv">
-    
-    <div>
-        <h1 id="title">Event Scheduler</h1>
-        <form action="" id="event-scheduler">
-            
-            <label for="event-name">Event Name:</label>
-            <input type="text" id="event-name" name="event-name" required><br><br>
-            <label for="start-time">Start Time:</label>
-            <input type="time" id="start-time" name="start-time" required><br><br>
-            <label for="end-time">End Time:</label>
-            <input type="time" id="end-time" name="end-time"><br><br>
-            
-            <h3> Starting Location:</h3>
-            <input type="text" id="start" placeholder="Enter your starting location">
-            <br>
-            <h3>Destination:</h3>
-            <input type="text" id="end" placeholder="Enter your destination">
-            <br>
-            <h3>Avoid Highways:</h3>
-            <input type="checkbox" id="avoid-highways">
-            <br>
-            <h3>Avoid Tolls:</h3>
-            <input type="checkbox" id="avoid-tolls">
-            <br>
-            <label for="mode">Mode of Travel:</label>
-            <select id="mode">
-                <option value="DRIVING">Driving</option>
-                <option value="WALKING">Walking</option>
-                <option value="BICYCLING">Bicycling</option>
-            </select>
-            <br>
-            <button type="button" onclick="calculateDistance()">Calculate Distance</button>
-            <p id="output"></p>
-        </form>
+    <div id="blankDiv">
+        <div>
+            <h1 id="title">Event Scheduler</h1>
+            <form id="event-scheduler"action="../">
+                <label for="event-name">Event Name:</label>
+                <input type="text" id="event-name" name="event-name" required><br><br>
+                <label for="start-time">Start Time:</label>
+                <input type="time" id="start-time" name="start-time" required><br><br>
+                <label for="end-time">End Time:</label>
+                <input type="time" id="end-time" name="end-time"><br><br>
+                
+                <h3>Starting Location:</h3>
+                <input type="text" id="start" placeholder="Enter your starting location">
+                <br>
+                <h3>Destination:</h3>
+                <input type="text" id="end" placeholder="Enter your destination">
+                <br>
+                <h3>Avoid Highways:</h3>
+                <input type="checkbox" id="avoid-highways">
+                <br>
+                <h3>Avoid Tolls:</h3>
+                <input type="checkbox" id="avoid-tolls">
+                <br>
+                <label for="mode">Mode of Travel:</label>
+                <select id="mode">
+                    <option value="DRIVING">Driving</option>
+                    <option value="WALKING">Walking</option>
+                    <option value="BICYCLING">Bicycling</option>
+                </select>
+                <br>
+                <button type="button" onclick="calculateDistance()">Calculate Distance</button>
+                <p id="output"></p>
+                <br>
+                <button type="submit">Add Event</button>
+            </form>
+        </div>
     </div>
-</div>
 
     <script src="distanceScript.js"></script>
 </body>

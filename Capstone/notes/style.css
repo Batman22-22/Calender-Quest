@@ -1,65 +1,82 @@
- .noteList li{
-    color: #ffffff;
-    margin-bottom: 10px;
-  }
-  
- .notes p,
- .notes input,
- .noteList li{
-    font-weight: 300;
-    font-size: 14px;
-  }
-  
- .notes p{
-    border-bottom: solid 1px rgba(255,255,255,0.4);
-  }
-  
- .notes input{
-    background-color: #F48989;
-    color: #ffffff;
-    border: none;
-    width: 200px;
-  }
-  
- .addNote,
- .removeNote{
-    float: right;
-    color: rgba(206, 23, 23, 0.4);
-    font-weight: bold;
-    margin-left: 20px;
-  }
-  
- .addNote:hover,
- .removeNote:hover{
-    color: #f70404;
-  }
-  
- .addNote{
-    font-size: 16px;
-  }
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
 
-  body{
-    margin: 20px;
-    background-color: #EEEDE9;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    font-size: 96.5%;
-    font-family: Helvetica, Arial, sans-serif;
-  }
-  
-  input{
-    font-family: Helvetica, Arial, sans-serif;
-  }
-  
-  h1, h2, h3, h4, h5, p{
-    margin-bottom: 10px;
-  }
-  
-  p{
-    line-height: 20px;
-  }
-  
-  a{
-    text-decoration: none;
-    color: #FF462B;
-  }
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #5cb85c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #4cae4c;
+}
+
+#notes-container {
+  margin-top: 20px;
+}
+
+#note-input{
+  padding: 0%;
+}
+
+.note {
+  background-color: #e9e9e9;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  word-wrap: break-word;
+}
+
+.note span {
+  max-width: 95%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.remove-icon {
+  color: #d9534f;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+}
+
+.remove-icon:hover {
+  color: #c9302c;
+}
