@@ -3,9 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Meal Plans</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>this is filler text</h1>
+    <header>
+        <h1>Meal Plans</h1>
+    </header>
+
+    <main>
+        <div class="container2">
+            <button id="createMealPlanBtn">Create New Meal Plan</button>
+            <button id="surpriseMeBtn">Surprise Me</button>
+        </div>
+
+        <div id="mealPlanModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitle">Create Meal Plan</h2>
+                <form id="mealPlanForm">
+                    <h2>Meal Plan Name:</h2>
+                    <input type="text" id="planName" name="planName" required>
+                    <div id="days-meals">
+                        <div class="day-meal-input">
+                            <h2>Sunday:</h2>
+                            <textarea id="sunday" name="sunday" placeholder="Enter meals for Sunday"></textarea>
+                        </div>
+                        <div class="day-meal-input">
+                            <h2>Monday:</h2>
+                            <textarea id="monday" name="monday" placeholder="Enter meals for Monday"></textarea>
+                        </div>
+                        <div class="day-meal-input">
+                            <h2>Tuesday:</h2>
+                            <textarea id="tuesday" name="tuesday" placeholder="Enter meals for Tuesday"></textarea>
+                        </div>
+                        <div class="day-meal-input">
+                            <h2>Wednesday:</h2>
+                            <textarea id="wednesday" name="wednesday" placeholder="Enter meals for Wednesday"></textarea>
+                        </div>
+                        <div class="day-meal-input">
+                            <h2>Thursday:</h2>
+                            <textarea id="thursday" name="thursday" placeholder="Enter meals for Thursday"></textarea>
+                        </div>
+                        <div class="day-meal-input">
+                            <h2>Friday:</h2>
+                            <textarea id="friday" name="friday" placeholder="Enter meals for Friday"></textarea>
+                        </div>
+                        <div class="day-meal-input">
+                            <h2>Saturday:</h2>
+                            <textarea id="saturday" name="saturday" placeholder="Enter meals for Saturday"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" id="saveMealPlanBtn">Save Meal Plan</button>
+                </form>
+            </div>
+        </div>
+        
+
+        <ul id="mealPlansList" class="meal-plans-list">
+            <!-- Meal plans will be dynamically added here -->
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 CalenderQuest. All Rights Reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

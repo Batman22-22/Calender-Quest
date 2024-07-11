@@ -1,11 +1,15 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Register Page</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-
-<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  </head>
+  <body>
   <div id="pic">
     <div>
       <h1 id="title">Calender Quest</h1>
@@ -21,11 +25,16 @@
           <h2>Password</h2>
           <input type="password" name="password" placeholder="Password" required />
           <br /><br /><br />
-          <input type="submit" id="button" value="Sign Up" />
+          <input type="submit" id="button" value="Sign Up" /><br><br>
         </form>
+        <button id="google-signup">Sign Up with Google</button>
+        <button id="phone-signup">Sign Up with Phone</button>
+        <br>
+        <p>Have an account? <a href="../../Capstone/Login">Login</a></p>
       </div>
     </div>
   </div>
+  <script src="script.js"></script>
 </body>
 <footer>
   <p>&copy; 2024 Calendar Quest</p>

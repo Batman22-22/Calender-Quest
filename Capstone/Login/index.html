@@ -1,33 +1,35 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Login Page</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script defer src="script.js"></script>
 </head>
-
 <body>
-  <div id="pic">
-
-  <div>
-    <h1 id="title">Calendar Quest</h1>
-    <div class="main-box">
-      <h1>Welcome Back to Calendar Quest!</h1>
-      <p>Quest for Time Management Excellence Begins Here</p>
-      
-      <form action="calender" method="POST">
-        <h2>Username:</h2>
-        <input type="text" name="username" placeholder="Username" required />
-        <h2>Password</h2>
-        <input type="password" name="password" placeholder="Password" required />
-        <br /><br /><br />
-        <input type="submit" id="button" value="Login" />
-      </form>
+    <div id="pic">
+        <div class="main-box">
+            <h1 id="title">Calendar Quest</h1>
+            <h2>Log in to your account</h2>
+            <form id="login-form">
+                <h2>Email</h2>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <h2>Password</h2>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
+                <input type="submit" id="button" value="Log In"><br><br>
+            </form>
+            <button id="google-login">Log in with Google</button>
+            <button id="phone-login">Log in with Phone</button><br><br>
+            <P>Have an account? <a href="../../Capstone/Login">Login</a></P>
+            <a href="#" id="forgot-password">Forgot Password?</a>
+        </div>
     </div>
-  </div>
-  </div>
+    <footer>
+        <p>&copy; 2024 Calendar Quest. All Rights Reserved.</p>
+    </footer>
 </body>
-
-<footer>
-  <p>&copy; 2024 Calendar Quest</p>
-</footer>
 </html>

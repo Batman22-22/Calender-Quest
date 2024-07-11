@@ -3,9 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Recipe Quest</title>
+    <link rel="stylesheet" href="../recipes/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>this is filler text</h1>
+    <div class="container">
+        <div class="content">
+            <h1>Recipe Quest</h1>
+            <h2>Discover Delicious Recipes</h2>
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Search for recipes..." aria-label="Search for recipes">
+                <button id="search-button">Search</button>
+            </div>
+            <div id="recipes-container" class="recipes-container"></div>
+            <h2>Saved Recipes</h2>
+            <div id="saved-recipes-container" class="recipes-container"></div>
+            <button id="add-recipe-button" class="add-recipe-button">Add Recipe</button>
+        </div>
+    </div>
+
+    <div id="recipe-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal(event)" aria-label="Close">&times;</button>
+            <h2 id="modal-title">Recipe Details</h2>
+            <div id="recipe-details"></div>
+            <button id="save-recipe" class="save-recipe-button">Save Recipe</button>
+        </div>
+    </div>
+
+    <div id="add-recipe-modal" class="modal" role="dialog" aria-labelledby="add-recipe-title" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal(event)" aria-label="Close">&times;</button>
+            <h2 id="add-recipe-title">Add New Recipe</h2>
+            <form id="add-recipe-form">
+                <label for="recipe-title">Title:</label>
+                <input type="text" id="recipe-title" required aria-required="true">
+                <label for="recipe-image">Image URL:</label>
+                <input type="text" id="recipe-image" required aria-required="true">
+                <label for="recipe-ingredients">Ingredients:</label>
+                <textarea id="recipe-ingredients" required aria-required="true"></textarea>
+                <label for="recipe-instructions">Instructions:</label>
+                <textarea id="recipe-instructions" required aria-required="true"></textarea>
+                <button type="submit" class="submit-recipe-button">Add Recipe</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Recipe Quest. All Rights Reserved.</p>
+            <div class="social-icons">
+                <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script src="../recipes/script.js"></script>
 </body>
 </html>
