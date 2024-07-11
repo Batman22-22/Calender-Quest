@@ -1,55 +1,101 @@
+/* Global styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 15vw;
+    margin: 0;
     padding: 0;
+    background-image: url('../../images/bg.jpg');
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
-.profile-container {
-    background-color: white;
-    width: 400px;
-    box-shadow: 0 0 10px #0000;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.profile-header {
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
+/* Container styles */
+.container {
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.2);
     padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Profile header styles */
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.profile-picture-label {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .profile-picture {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    border: 5px solid white;
-    background-color: white;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 3px solid #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-#upload-picture {
-    display: block;
-    margin: 10px auto;
+.edit-overlay {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.user-name, .user-bio, .about {
-    color: red;
-    width: 100%;
-    border: none;
-    text-align: center;
+.profile-picture-label:hover .edit-overlay {
+    opacity: 1;
 }
 
-.user-bio, .about {
-    font-style: italic;
+.user-name {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: #111111;
 }
 
+.user-bio {
+    color: #14da1e;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Profile details section styles */
 .profile-details {
+    background: rgba(255, 255, 255, 0.3);
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.profile-details h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #14da1e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-details p {
+    line-height: 1.6;
+    color: #0a0a0a;
 }
 
 .profile-details ul {
@@ -58,34 +104,48 @@ body {
 }
 
 .profile-details ul li {
-    margin: 10px 0;
+    margin-bottom: 5px;
+    color: #0c0c0c;
 }
 
-input[type="text"], input[type="email"], input[type="tel"], textarea {
-    width: 100%;
-    padding: 5px;
-    margin: 5px 0;
-    box-sizing: border-box;
-}
-
-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
+.edit-button {
     background-color: #4CAF50;
     color: white;
     border: none;
+    padding: 5px 10px;
     cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
-button:hover {
+.edit-button:hover {
     background-color: #45a049;
+    opacity: 0.8;
 }
 
-@media only screen and (max-width: 700px) {
-   /* Your responsive styles */
-}
+/* Responsive design */
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
 
-@media only screen and (min-width: 1366.1px) {
-   /* Your responsive styles */
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+    }
+
+    .user-name {
+        font-size: 20px;
+    }
+
+    .user-bio,
+    .profile-details h2 {
+        font-size: 18px;
+    }
+
+    .edit-button {
+        font-size: 12px;
+    }
 }
