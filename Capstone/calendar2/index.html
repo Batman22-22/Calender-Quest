@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Bootstrap Example</title>
+  <title>Calendar</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -28,19 +28,6 @@
         </nav>
     </div>
 </header>
-
-  <div id="toggle-button">
-    <button onclick="toggleMenu()">Menu</button>
-</div>
-
-<!-- Menu -->
-<div class="menu collapsed" id="menu">
-    <button onclick="goProfile()">Profile</button>
-    <button onclick="goToDo()">To-Do List</button>
-    <button onclick="goNotes()">Notes</button>
-    <button onclick="goFood()">Meals</button>
-    <button onclick="logOut()">Log Out</button>
-</div>
 
 <div id="calendar">
     <div id="header">
@@ -73,6 +60,8 @@
         <form id="event-form">
           <label for="event-name">Event Name:</label>
                 <input type="text" id="event-name" name="event-name" required><br><br>
+                <label for="event-date">Event Date:</label>
+                <input type="date" id="event-date" name="event-date" required><br><br>
                 <label for="start-time">Start Time:</label>
                 <input type="time" id="start-time" name="start-time" required><br><br>
                 <label for="end-time">End Time:</label>

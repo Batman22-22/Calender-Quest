@@ -118,39 +118,6 @@ $(document).ready(function () {
     renderCalendar(currentMonth, currentYear);
 });
 
-
-
-
-
-
-function toggleMenu() {
-    var menu = document.getElementById('menu');
-    menu.classList.toggle('collapsed');
-}
-
-function goProfile() {
-    window.location.href = "../../Capstone/profile";
-}
-
-function goToDo() {
-    window.location.href = "../../Capstone/profile";
-}
-
-function goNotes() {
-    window.location.href = "../../Capstone/notes";
-}
-
-function goFood() {
-    window.location.href = "../../Capstone/meal-plan";
-}
-
-function logOut() {
-    window.location.href = "../../Capstone";
-}
-
-
-
-
 document.getElementById('save-button').addEventListener('click', function () {
     const noteInput = document.getElementById('note-input');
     const notesContainer = document.getElementById('notes-container');
@@ -176,6 +143,143 @@ document.getElementById('save-button').addEventListener('click', function () {
         alert('Please enter a note before saving.');
     }
 });
+
+
+var autocompleteStart, autocompleteEnd;
+
+function initAutocomplete() {
+    autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('start'), { types: ['establishment'] });
+    autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('end'), { types: ['establishment'] });
+}
+
+function initMapasync() {
+    initAutocomplete();
+}
+
+function loadScript() {
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync';
+    script.defer = true;
+    document.head.appendChild(script);
+}
+
+function calculateDistance() {
+    var origin = document.getElementById('start').value;
+    var destination = document.getElementById('end').value;
+    var avoidHighways = document.getElementById('avoid-highways').checked;
+    var avoidTolls = document.getElementById('avoid-tolls').checked;
+    var mode = document.getElementById('mode').value;
+
+    var service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix({
+        origins: [origin],
+        destinations: [destination],
+        travelMode: google.maps.TravelMode[mode],
+        avoidHighways: avoidHighways,
+        avoidTolls: avoidTolls,
+        unitSystem: google.maps.UnitSystem.IMPERIAL
+    }, function (response, status) {
+        if (status !== google.maps.DistanceMatrixStatus.OK) {
+            alert('Error was: ' + status);
+        } else {
+            var originAddress = response.originAddresses[0];
+            var destinationAddress = response.destinationAddresses[0];
+            if (response.rows[0].elements[0].status === "ZERO_RESULTS") {
+                alert('Error: No route found');
+            } else {
+                var distance = response.rows[0].elements[0].distance.text;
+                var duration = response.rows[0].elements[0].duration.text;
+                var output = 'Distance: ' + distance + '<br> Duration: ' + duration;
+                document.getElementById('output').innerHTML = output;
+            }
+        }
+    });
+}
+
+$(document).ready(function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const date = urlParams.get('date');
+    $("#event-date").val(date);
+
+    $("#event-scheduler").submit(function (event) {
+        event.preventDefault();
+        const eventName = $("#event-name").val();
+        const startTime = $("#start-time").val();
+        const endTime = $("#end-time").val();
+        const start = $("#start").val();
+        const end = $("#end").val();
+        const avoidHighways = $("#avoid-highways").is(':checked');
+        const avoidTolls = $("#avoid-tolls").is(':checked');
+        const mode = $("#mode").val();
+
+        const eventDetails = {
+            eventName,
+            startTime,
+            endTime,
+            start,
+            end,
+            avoidHighways,
+            avoidTolls,
+            mode
+        };
+
+        const events = JSON.parse(localStorage.getItem("events")) || {};
+        events[date] = eventDetails;
+        localStorage.setItem("events", JSON.stringify(events));
+        //window.location.href = "../";  // Change this to your calendar page
+    });
+});
+
+loadScript();
+
+document.getElementById("event-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the form from submitting
+
+    // Get form values
+    let eventName = document.getElementById("event-name").value;
+    let eventDate = document.getElementById("event-date").value;
+    let startTime = document.getElementById("start-time").value;
+    let endTime = document.getElementById("end-time").value;
+    let destination = document.getElementById("end").value;
+    let duration = document.getElementById("output").innerText.split('Duration: ')[1]; // Assuming the distance calculation is done
+
+    // Convert start time to 12-hour format
+    let startTime12h = formatTimeTo12H(startTime);
+    // Convert end time to 12-hour format
+    let endTime12h = formatTimeTo12H(endTime);
+
+    // Create list item to display the event
+    let eventItem = document.createElement("li");
+
+    // Create a span to hold the event details
+    let eventDetails = document.createElement("span");
+    eventDetails.innerHTML = `<b>${eventName}</b><br>Date: ${eventDate}<br>Time: ${startTime12h} to ${endTime12h}<br>Destination: ${destination}<br>Duration: ${duration}`;
+    eventItem.appendChild(eventDetails);
+
+    // Create a delete button with a trash icon
+    let deleteButton = document.createElement("button");
+    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>'; // Using FontAwesome trash icon
+    deleteButton.className = 'delete-button';
+    deleteButton.addEventListener("click", function () {
+        eventItem.remove(); // Remove the event item when the delete button is clicked
+    });
+
+    eventItem.appendChild(deleteButton);
+
+    // Append the event item to the events list
+    document.getElementById("events").appendChild(eventItem);
+
+    // Clear form inputs after adding event
+    document.getElementById("event-form").reset();
+});
+
+// Function to convert time to 12-hour format
+function formatTimeTo12H(time) {
+    let formattedTime = new Date("2000-01-01T" + time + ":00Z").toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+    return formattedTime;
+}
+
+
 
 
 
@@ -502,110 +606,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-var autocompleteStart, autocompleteEnd;
-
-function initAutocomplete() {
-    autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('start'), { types: ['establishment'] });
-    autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('end'), { types: ['establishment'] });
-}
-
-function initMapasync() {
-    initAutocomplete();
-}
-
-function loadScript() {
-    var script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync';
-    script.defer = true;
-    document.head.appendChild(script);
-}
-
-function calculateDistance() {
-    var origin = document.getElementById('start').value;
-    var destination = document.getElementById('end').value;
-    var avoidHighways = document.getElementById('avoid-highways').checked;
-    var avoidTolls = document.getElementById('avoid-tolls').checked;
-    var mode = document.getElementById('mode').value;
-
-    var service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix({
-        origins: [origin],
-        destinations: [destination],
-        travelMode: google.maps.TravelMode[mode],
-        avoidHighways: avoidHighways,
-        avoidTolls: avoidTolls,
-        unitSystem: google.maps.UnitSystem.IMPERIAL
-    }, function (response, status) {
-        if (status !== google.maps.DistanceMatrixStatus.OK) {
-            alert('Error was: ' + status);
-        } else {
-            var originAddress = response.originAddresses[0];
-            var destinationAddress = response.destinationAddresses[0];
-            if (response.rows[0].elements[0].status === "ZERO_RESULTS") {
-                alert('Error: No route found');
-            } else {
-                var distance = response.rows[0].elements[0].distance.text;
-                var duration = response.rows[0].elements[0].duration.text;
-                var output = 'Distance: ' + distance + '<br> Duration: ' + duration;
-                document.getElementById('output').innerHTML = output;
-            }
-        }
-    });
-}
-
-$(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const date = urlParams.get('date');
-    $("#event-date").val(date);
-
-    $("#event-scheduler").submit(function (event) {
-        event.preventDefault();
-        const eventName = $("#event-name").val();
-        const startTime = $("#start-time").val();
-        const endTime = $("#end-time").val();
-        const start = $("#start").val();
-        const end = $("#end").val();
-        const avoidHighways = $("#avoid-highways").is(':checked');
-        const avoidTolls = $("#avoid-tolls").is(':checked');
-        const mode = $("#mode").val();
-
-        const eventDetails = {
-            eventName,
-            startTime,
-            endTime,
-            start,
-            end,
-            avoidHighways,
-            avoidTolls,
-            mode
-        };
-
-        const events = JSON.parse(localStorage.getItem("events")) || {};
-        events[date] = eventDetails;
-        localStorage.setItem("events", JSON.stringify(events));
-        window.location.href = "../";  // Change this to your calendar page
-    });
-});
 
 
-loadScript();
 
-// JavaScript to add event to the list
-document.getElementById("event-form").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the form from submitting
 
-    // Get form values
-    let eventName = document.getElementById("event-name").value;
-    let startTime = document.getElementById("start-time").value;
-    let endTime = document.getElementById("end-time").value;
 
-    // Create list item to display the event
-    let eventItem = document.createElement("li");
-    eventItem.textContent = `${eventName} - ${startTime} to ${endTime}`;
-
-    // Append the event item to the events list
-    document.getElementById("events").appendChild(eventItem);
-
-    // Clear form inputs after adding event
-    document.getElementById("event-form").reset();
-});
