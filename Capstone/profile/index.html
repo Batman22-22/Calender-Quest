@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,7 +19,9 @@
             <input type="file" id="profilePictureInput" accept="image/*" style="display: none;"> <!-- Input for profile picture upload -->
             <h1 class="user-name" id="userName">Lorem ipsum</h1>
             <p class="user-bio" id="userBio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <button class="edit-button" onclick="editUserBio()">Edit</button>
         </div>
+        
         
         <div class="profile-details">
             <h2>About <button class="edit-button" onclick="editAbout()">Edit</button></h2>
@@ -33,6 +36,11 @@
         </div>
     </div>
 
+    <footer>
+        <a href="../calendar2/" class="button">Calendar</a> |
+        <a href="../signOrLog/index.html" class="button">Sign-Out</a>
+        <p>&copy; 2024 Calendar Quest.</p>
+      </footer>
     <script src="script.js"></script>
 </body>
 </html>

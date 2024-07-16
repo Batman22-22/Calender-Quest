@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.png">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -14,9 +15,9 @@
         <div class="main-box">
             <h1 id="title">Calendar Quest</h1>
             <h2>Log in to your account</h2>
-            <form id="login-form">
+            <form action="../calendar2" id="login-form">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required aria-label="Email">
+                <input type="email" id="email" name="email" placeholder="Enter your email" required aria-label="Email"><span class="input-group-text">@example.com</span>
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required aria-label="Password"><br>
                 <input type="submit" id="button" value="Log In"><br><br>
