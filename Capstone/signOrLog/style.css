@@ -1,6 +1,9 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #a52222;
+    background-image: url(../bg-red.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,7 +58,7 @@ footer {
     bottom: 10px;
     width: 100%;
     text-align: center;
-    color: #500707;
+    color: #ffffff;
 }
 
 #pic {
@@ -63,7 +66,7 @@ footer {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    padding: 5.5% 10% 7% 10%;
+    padding: 10%;
     /* margin-top: 15%; */
     border-radius: 10px;
   }

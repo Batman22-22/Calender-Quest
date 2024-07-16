@@ -18,13 +18,16 @@
 <body>
 
   <header>
-    <div class="container">
-        <h1 id="dashboard-title">Dashboard</h1>
+    <div class="container3">
+        <h1 id="dashboard-title">Calendar<br>Quest</h1>
         <nav>
             <ul>
-                <li><a href="../signOrLog/index.html">Sign-Out</a></li>
-                <li><a href="../profile/index.html">Profile</a></li>
+                <li>            <input type="button" value="Profile" onclick="window.location.href='../profile/index.html'">
+                </li>
+                <li>            <input type="button" value="Sign-Out" onclick="window.location.href='../signOrLog/index.html'">
+                </li>
             </ul>
+
         </nav>
     </div>
 </header>
@@ -124,7 +127,8 @@
         <div id="noteBody">
           <div class="container">
             <h1 class="notes">Notes</h1>
-            <textarea class="notes" id="note-input" placeholder="Type your note here..."></textarea>
+            <textarea class="notes" id="note-input" placeholder="Type your note here..." rows="1" cols="50"></textarea>
+
             <button class="notes" id="save-button">Save Note</button>
             <div class="notes" id="notes-container"></div>
           </div>
@@ -134,10 +138,10 @@
       <div class="carousel-item">
         <div id="mealBody">
         <header>
-          <h1>Meal Plans</h1>
-      </header>
-  
-      <main>
+        </header>
+        
+        <main>
+        <h1>Meal Plans</h1>
           <div class="container2">
               <button id="createMealPlanBtn">Create New Meal Plan</button>
               <button id="surpriseMeBtn">Surprise Me</button>
@@ -202,10 +206,13 @@
     </a>
   </div>
 
-
-
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="script.js"></script>
 </body>
+<footer>
+  <a href="../profile/index.html" class="button">Profile</a> |
+  <a href="../signOrLog/index.html" class="button">Sign-Out</a>
+  <p>&copy; 2024 Calendar Quest.</p>
+</footer>
 
 </html>

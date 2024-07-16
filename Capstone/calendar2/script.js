@@ -94,8 +94,15 @@ $(document).ready(function () {
         renderCalendar(currentMonth, currentYear);
     });
 
+    function clearDistanceCalculation() {
+        document.getElementById('output').innerHTML = '';
+    }
+    
+
     // Function to show event modal with existing event details or for adding new event
     function showEventModal(date) {
+         // Clear distance calculation
+    clearDistanceCalculation();
         $("#event-date").val(date);
         const existingEvent = events[date];
         if (existingEvent) {
@@ -229,6 +236,8 @@ $(document).ready(function () {
         //window.location.href = "../";  // Change this to your calendar page
     });
 });
+
+
 
 loadScript();
 
@@ -602,12 +611,3 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the application
     init();
 });
-
-
-
-
-
-
-
-
-
