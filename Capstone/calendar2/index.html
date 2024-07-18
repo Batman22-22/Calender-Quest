@@ -12,7 +12,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync" defer></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync"
+    defer></script>
 
 </head>
 
@@ -23,84 +25,81 @@
       <h1 id="dashboard-title">Calendar<br>Quest</h1>
       <img src="../favicon.png" width="100px" height="100px" style="border-radius: 10px;">
       <nav>
-            <ul>
-                <li>            <input type="button" value="Profile" onclick="window.location.href='../profile/index.html'">
-                </li>
-                <li>            <input type="button" value="Sign-Out" onclick="window.location.href='../signOrLog/index.html'">
-                </li>
-            </ul>
-
-        </nav>
+        <ul>
+          <li> <input type="button" value="Profile" onclick="window.location.href='../profile/index.html'"> </li>
+          <li> <input type="button" value="Sign-Out" onclick="window.location.href='../signOrLog/index.html'"> </li>
+        </ul>
+      </nav>
     </div>
-</header>
+  </header>
 
-<div id="calendar">
+  <div id="calendar">
     <div id="header">
-        <button id="prev">Prev</button>
-        <h2 id="month-year"></h2>
-        <button id="next">Next</button>
+      <button id="prev">Prev</button>
+      <h2 id="month-year"></h2>
+      <button id="next">Next</button>
     </div>
     <table id="calendar-table">
-        <thead>
-            <tr>
-                <th>Sun</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th>Wed</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>Sat</th>
-            </tr>
-        </thead>
-        <tbody id="calendar-body">
-        </tbody>
+      <thead>
+        <tr>
+          <th>Sun</th>
+          <th>Mon</th>
+          <th>Tue</th>
+          <th>Wed</th>
+          <th>Thu</th>
+          <th>Fri</th>
+          <th>Sat</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body">
+      </tbody>
     </table>
-</div>
+  </div>
 
-<!-- Event Modal -->
-<div id="event-modal" class="modal">
+  <!-- Event Modal -->
+  <div id="event-modal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Add/Edit Event</h2>
-        <form id="event-form">
-          <label for="event-name">Event Name:</label>
-                <input type="text" id="event-name" name="event-name" required><br><br>
-                <label for="event-date">Event Date:</label>
-                <input type="date" id="event-date" name="event-date" required><br><br>
-                <label for="start-time">Start Time:</label>
-                <input type="time" id="start-time" name="start-time" required><br><br>
-                <label for="end-time">End Time:</label>
-                <input type="time" id="end-time" name="end-time"><br><br>
-                
-                <h3>Starting Location:</h3>
-                <input type="text" id="start" placeholder="Enter your starting location">
-                <br>
-                <h3>Destination:</h3>
-                <input type="text" id="end" placeholder="Enter your destination">
-                <br>
-                <h3>Avoid Highways:</h3>
-                <input type="checkbox" id="avoid-highways">
-                <br>
-                <h3>Avoid Tolls:</h3>
-                <input type="checkbox" id="avoid-tolls">
-                <br>
-                <label for="mode">Mode of Travel:</label>
-                <select id="mode">
-                    <option value="DRIVING">Driving</option>
-                    <option value="WALKING">Walking</option>
-                    <option value="BICYCLING">Bicycling</option>
-                </select>
-                <br>
-                <button type="button" onclick="calculateDistance()">Calculate Distance</button>
-                <p id="output"></p>
-                <br>
-                <button type="submit">Add Event</button>
-        </form>
+      <span class="close">&times;</span>
+      <h2>Add/Edit Event</h2>
+      <form id="event-form">
+        <label for="event-name">Event Name:</label>
+        <input type="text" id="event-name" name="event-name" required><br><br>
+        <label for="event-date">Event Date:</label>
+        <input type="date" id="event-date" name="event-date" required><br><br>
+        <label for="start-time">Start Time:</label>
+        <input type="time" id="start-time" name="start-time" required><br><br>
+        <label for="end-time">End Time:</label>
+        <input type="time" id="end-time" name="end-time"><br><br>
+
+        <h3>Starting Location:</h3>
+        <input type="text" id="start" placeholder="Enter your starting location">
+        <br>
+        <h3>Destination:</h3>
+        <input type="text" id="end" placeholder="Enter your destination">
+        <br>
+        <h3>Avoid Highways:</h3>
+        <input type="checkbox" id="avoid-highways">
+        <br>
+        <h3>Avoid Tolls:</h3>
+        <input type="checkbox" id="avoid-tolls">
+        <br>
+        <label for="mode">Mode of Travel:</label>
+        <select id="mode">
+          <option value="DRIVING">Driving</option>
+          <option value="WALKING">Walking</option>
+          <option value="BICYCLING">Bicycling</option>
+        </select>
+        <br>
+        <button type="button" onclick="calculateDistance()">Calculate Distance</button>
+        <p id="output"></p>
+        <br>
+        <button type="submit">Add Event</button>
+      </form>
     </div>
-</div>
+  </div>
 
 
-  <div id="demo" class="carousel slide">
+  <div id="demo" class="carousel">
 
     <!-- Indicators -->
     <ul class="carousel-indicators">
@@ -112,13 +111,13 @@
     <!-- The slideshow -->
     <div class="carousel-inner">
       <div class="carousel-item active">
-       
+
         <div id="eventBody">
-         <!-- Event List -->
-         <div id="event-list">
-           <h2>Event List</h2>
-           <ul id="events">
-             <!-- Events will be dynamically added here -->
+          <!-- Event List -->
+          <div id="event-list">
+            <h2>Event List</h2>
+            <ul id="events">
+              <!-- Events will be dynamically added here -->
             </ul>
           </div>
         </div>
@@ -139,63 +138,72 @@
 
       <div class="carousel-item">
         <div id="mealBody">
-        <header>
-        </header>
-        
-        <main>
-        <h1>Meal Plans</h1>
-          <div class="container2">
+          <header>
+          </header>
+
+          <main>
+            <h1>Meal Plans</h1>
+            <div class="container2">
               <button id="createMealPlanBtn">Create New Meal Plan</button>
               <button id="surpriseMeBtn">Surprise Me</button>
-          </div>
-  
-          <div id="mealPlanModal" class="modal">
+            </div>
+
+            <div id="mealPlanModal" class="modal">
               <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <h2 id="modalTitle">Create Meal Plan</h2>
-                  <form id="mealPlanForm">
-                      <h2>Meal Plan Name:</h2>
-                      <input type="text" id="planName" name="planName" required>
-                      <div id="days-meals">
-                          <div class="day-meal-input">
-                              <h2>Sunday:</h2>
-                              <textarea id="sunday" name="sunday" placeholder="Enter meals for Sunday"></textarea>
-                          </div>
-                          <div class="day-meal-input">
-                              <h2>Monday:</h2>
-                              <textarea id="monday" name="monday" placeholder="Enter meals for Monday"></textarea>
-                          </div>
-                          <div class="day-meal-input">
-                              <h2>Tuesday:</h2>
-                              <textarea id="tuesday" name="tuesday" placeholder="Enter meals for Tuesday"></textarea>
-                          </div>
-                          <div class="day-meal-input">
-                              <h2>Wednesday:</h2>
-                              <textarea id="wednesday" name="wednesday" placeholder="Enter meals for Wednesday"></textarea>
-                          </div>
-                          <div class="day-meal-input">
-                              <h2>Thursday:</h2>
-                              <textarea id="thursday" name="thursday" placeholder="Enter meals for Thursday"></textarea>
-                          </div>
-                          <div class="day-meal-input">
-                              <h2>Friday:</h2>
-                              <textarea id="friday" name="friday" placeholder="Enter meals for Friday"></textarea>
-                          </div>
-                          <div class="day-meal-input">
-                              <h2>Saturday:</h2>
-                              <textarea id="saturday" name="saturday" placeholder="Enter meals for Saturday"></textarea>
-                          </div>
-                      </div>
-                      <button type="button" id="saveMealPlanBtn">Save Meal Plan</button>
-                  </form>
+                <span class="close">&times;</span>
+                <h2 id="modalTitle">Create Meal Plan</h2>
+                <form id="mealPlanForm">
+                  <h2>Meal Plan Name:</h2>
+                  <input type="text" id="planName" name="planName" required>
+                  <div id="days-meals">
+                    <div class="day-meal-input">
+                      <h2>Sunday:</h2>
+                      <textarea id="sunday" name="sunday" placeholder="Enter meals for Sunday"></textarea>
+                    </div>
+                    <div class="day-meal-input">
+                      <h2>Monday:</h2>
+                      <textarea id="monday" name="monday" placeholder="Enter meals for Monday"></textarea>
+                    </div>
+                    <div class="day-meal-input">
+                      <h2>Tuesday:</h2>
+                      <textarea id="tuesday" name="tuesday" placeholder="Enter meals for Tuesday"></textarea>
+                    </div>
+                    <div class="day-meal-input">
+                      <h2>Wednesday:</h2>
+                      <textarea id="wednesday" name="wednesday" placeholder="Enter meals for Wednesday"></textarea>
+                    </div>
+                    <div class="day-meal-input">
+                      <h2>Thursday:</h2>
+                      <textarea id="thursday" name="thursday" placeholder="Enter meals for Thursday"></textarea>
+                    </div>
+                    <div class="day-meal-input">
+                      <h2>Friday:</h2>
+                      <textarea id="friday" name="friday" placeholder="Enter meals for Friday"></textarea>
+                    </div>
+                    <div class="day-meal-input">
+                      <h2>Saturday:</h2>
+                      <textarea id="saturday" name="saturday" placeholder="Enter meals for Saturday"></textarea>
+                    </div>
+                  </div>
+                  <button type="button" id="saveMealPlanBtn">Save Meal Plan</button>
+                </form>
               </div>
             </div>
             <ul id="mealPlansList" class="meal-plans-list">
               <!-- Meal plans will be dynamically added here -->
-          </ul>
+            </ul>
+        </div>
+        </main>
       </div>
-</main>
-</div>
+
+      <div class="carousel-item">
+        
+        <button onclick="fetchUserData()">Show Data</button>
+        <div id="userData">
+
+        </div>
+
+      </div>
 
     </div>
 
@@ -203,10 +211,14 @@
     <a class="carousel-control-prev" href="#demo" data-slide="prev">
       <span class="carousel-control-prev-icon"></span>
     </a>
+
     <a class="carousel-control-next" href="#demo" data-slide="next">
       <span class="carousel-control-next-icon"></span>
     </a>
   </div>
+
+
+
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="script.js"></script>

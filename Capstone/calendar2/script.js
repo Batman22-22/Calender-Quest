@@ -1,3 +1,65 @@
+const jsonBinUrl = 'https://api.jsonbin.io/v3/b/66994ca8ad19ca34f88978e8'; // Replace with your JSONBin URL
+const apiKey = '$2a$10$qppk3etiMyZ4D1QdhAlWLuVs0cp2gdQhn6JTELTti.STVtTfK5FkO'; // Replace with your API key
+
+async function fetchUserData() {
+    try {
+        const response = await fetch(jsonBinUrl, {
+            headers: {
+                'X-Master-Key': apiKey
+            }
+        });
+        const data = await response.json();
+        displayUserData(data); // Assuming data is an array of user objects
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function displayUserData(users) {
+    const userDataDiv = document.getElementById('userData');
+    users.forEach(user => {
+        let userInfo = `<div class="user-info">
+                            <h2>Username: ${user.username}</h2>
+                            <p>Email: ${user.email}</p>
+                            <p>Password: ${user.password}</p>`;
+        
+        userInfo += `<h3>Calendar Events:</h3>`;
+        user.calendarEvents.forEach(event => {
+            userInfo += `<div class="event">
+                            <p>Date: ${event.date}</p>
+                            <p>Event Name: ${event.eventName}</p>
+                            <p>Start Time: ${event.startTime}</p>
+                            <p>End Time: ${event.endTime}</p>
+                            <p>Destination: ${event.destination}</p>
+                            <p>Duration: ${event.duration}</p>
+                        </div>`;
+        });
+
+        userInfo += `<h3>Meal Plans:</h3>`;
+        user.mealPlans.forEach(plan => {
+            userInfo += `<div class="meal-plan">
+                            <p>Meal Plan Name: ${plan.name}</p>
+                            <p>Meals: ${plan.meals.map(meal => `${meal.day}: ${meal.meals}`).join(', ')}</p>
+                        </div>`;
+        });
+
+        userInfo += `<h3>Notes:</h3>`;
+        user.notes.forEach(note => {
+            userInfo += `<div class="note">
+                            <p>Note ID: ${note.id}</p>
+                            <p>Content: ${note.content}</p>
+                        </div>`;
+        });
+
+        userInfo += `</div>`;
+        userDataDiv.innerHTML += userInfo;
+    });
+}
+
+// Call fetchUserData to initiate data retrieval and display
+fetchUserData();
+
+
 $(document).ready(function () {
     const today = new Date();
     let currentMonth = today.getMonth();
@@ -233,7 +295,6 @@ $(document).ready(function () {
         const events = JSON.parse(localStorage.getItem("events")) || {};
         events[date] = eventDetails;
         localStorage.setItem("events", JSON.stringify(events));
-        //window.location.href = "../";  // Change this to your calendar page
     });
 });
 
@@ -323,6 +384,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("createMealPlanBtn").addEventListener("click", openCreateModal);
         document.getElementById("surpriseMeBtn").addEventListener("click", generateSurpriseMealPlan);
         document.getElementById("saveMealPlanBtn").addEventListener("click", saveMealPlan);
+        document.getElementById("searchMealPlans").addEventListener("input", searchMealPlans);
+        document.getElementById("exportMealPlansBtn").addEventListener("click", exportMealPlans);
+        document.getElementById("importMealPlansBtn").addEventListener("change", importMealPlans);
     }
 
     // Open create modal
@@ -410,11 +474,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Display meal plans
-    function displayMealPlans() {
+    function displayMealPlans(filteredPlans) {
         const plansList = document.getElementById("mealPlansList");
         plansList.innerHTML = "";
 
-        mealPlans.forEach(plan => {
+        (filteredPlans || mealPlans).forEach(plan => {
             const planItem = document.createElement("li");
             planItem.classList.add("meal-plan-item");
 
@@ -569,9 +633,55 @@ document.addEventListener("DOMContentLoaded", function () {
         return modalContent;
     }
 
+    // Search meal plans
+    function searchMealPlans() {
+        const query = document.getElementById("searchMealPlans").value.toLowerCase();
+        const filteredPlans = mealPlans.filter(plan => plan.name.toLowerCase().includes(query));
+        displayMealPlans(filteredPlans);
+    }
+
+    // Export meal plans to JSON
+    function exportMealPlans() {
+        const dataStr = JSON.stringify(mealPlans);
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+        const exportFileDefaultName = 'mealPlans.json';
+
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+
+    // Import meal plans from JSON
+    function importMealPlans(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedPlans = JSON.parse(e.target.result);
+                    if (Array.isArray(importedPlans)) {
+                        mealPlans = importedPlans;
+                        saveMealPlans();
+                        updateNextMealPlanNumber();
+                        displayMealPlans();
+                        alert("Meal plans imported successfully!");
+                    } else {
+                        alert("Invalid file format. Please upload a valid JSON file.");
+                    }
+                } catch (error) {
+                    alert("Error importing meal plans. Please check the file format and try again.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
     // Save meal plans to localStorage
     function saveMealPlans() {
         try {
+            //alert(JSON.stringify(mealPlans));
             localStorage.setItem("mealPlans", JSON.stringify(mealPlans));
         } catch (error) {
             console.error("Error saving meal plans:", error);
