@@ -15,17 +15,14 @@
         <div class="main-box">
             <h1 id="title">Calendar Quest</h1>
             <h2>Log in to your account</h2>
-            <form action="../calendar2" id="login-form">
+
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required aria-label="Email"><span class="input-group-text">@example.com</span>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required aria-label="Password"><br>
-                <input type="submit" id="button" value="Log In"><br><br>
-            </form>
-            <button id="google-login" aria-label="Log in with Google">Log in with Google</button>
-            <button id="phone-login" aria-label="Log in with Phone">Log in with Phone</button><br><br>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
+                <button onclick="login()">Login</button>
+
             <p>Don't have an account? <a href="../../Capstone/Register">Register</a></p>
-            <a href="#" id="forgot-password">Forgot Password?</a>
         </div>
     </div>
     <footer>
