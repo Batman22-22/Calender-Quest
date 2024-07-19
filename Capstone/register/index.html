@@ -18,19 +18,15 @@
         <h1>Welcome To Calendar Quest!</h1>
         <p>Quest for Time Management Excellence Begins Here</p>
         
-        <form action="../Login">
           <h2>Username:</h2>
-          <input type="text" name="username" placeholder="Username" required />
+          <input type="text" name="username" id="newUsername" placeholder="Username" required />
           <h2>Email</h2>
-          <input type="email" name="email" placeholder="Email" required />
+          <input type="email" name="email" id="newEmail" placeholder="Email" required />
           <h2>Password</h2>
-          <input type="password" name="password" placeholder="Password" required />
+          <input type="password" name="password" id="newPassword" placeholder="Password" required />
           <br /><br /><br />
-          <input type="submit" id="button" value="Sign Up" /><br><br>
-        </form>
-        <button id="google-signup">Sign Up with Google</button>
-        <button id="phone-signup">Sign Up with Phone</button>
-        <br>
+          <button onclick="addUser()">Sign up</button>
+
         <p>Have an account? <a href="../../Capstone/Login">Login</a></p>
       </div>
     </div>
