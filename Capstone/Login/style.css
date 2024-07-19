@@ -47,17 +47,13 @@ h1 {
   max-width: 400px;
 }
 
-form {
-  margin-top: 20px;
-}
-
 label {
   display: block;
   margin-top: 10px;
   font-weight: 500;
 }
 
-input[type="email"],
+input[type="text"],
 input[type="password"] {
   width: calc(100% - 20px);
   padding: 10px;
@@ -66,7 +62,6 @@ input[type="password"] {
   border-radius: 5px;
 }
 
-input[type="submit"],
 button {
   background-color: #007bff;
   color: white;
@@ -79,9 +74,12 @@ button {
   margin-top: 10px;
 }
 
-input[type="submit"]:hover,
 button:hover {
   background-color: #0056b3;
+}
+
+button:active{
+  background-color: #021e3b;
 }
 
 footer {

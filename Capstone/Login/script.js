@@ -26,6 +26,7 @@ const jsonBinUrl = 'https://api.jsonbin.io/v3/b/66994ca8ad19ca34f88978e8'; // Re
 
 			if (loggedInUser) {
 				displayUserData(loggedInUser);
+        alert('Logging in');
 				//document.getElementById('loginForm').style.display = 'none';
 				//document.getElementById('manageNotesForm').style.display = 'block';
 			} else {
@@ -35,6 +36,11 @@ const jsonBinUrl = 'https://api.jsonbin.io/v3/b/66994ca8ad19ca34f88978e8'; // Re
 
 		function displayUserData(user) {
 			const userDataDiv = document.getElementById('userData');
+			
+			alert(`Username: ${user.username}, 
+				Email: ${user.email}, 
+				Password: ${user.password}`);
+
 			userDataDiv.innerHTML = `<div class="user-info">
 									<h2>Username: ${user.username}</h2>
 									<p>Email: ${user.email}</p>
