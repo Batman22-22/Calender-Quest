@@ -1,5 +1,5 @@
-const jsonBinUrl = 'https://api.jsonbin.io/v3/b/66994ca8ad19ca34f88978e8'; // Replace with your JSONBin URL
-		const apiKey = '$2a$10$qppk3etiMyZ4D1QdhAlWLuVs0cp2gdQhn6JTELTti.STVtTfK5FkO'; // Replace with your API key
+const jsonBinUrl = 'https://api.jsonbin.io/v3/b/https://api.jsonbin.io/v3/b/6699d64facd3cb34a868209e'; // Replace with your JSONBin URL
+		const apiKey = '$2a$10$PAC1aWUZ1v6nYdASdlU9T.pSkUw29Ys.uKrdoYRZVL36dlUzxLRgK'; // Replace with your API key
 
 		let userData = null;
 		let loggedInUser = null;
