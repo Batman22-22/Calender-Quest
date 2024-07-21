@@ -3,7 +3,6 @@ const apiKey = '$2a$10$PAC1aWUZ1v6nYdASdlU9T.pSkUw29Ys.uKrdoYRZVL36dlUzxLRgK'; /
 
 let userData = null;
 let loggedInUser = null;
-//const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
 
 async function fetchUserData() {
     try {
@@ -13,14 +12,47 @@ async function fetchUserData() {
             }
         });
         const data = await response.json();
-        userData = data.record;
+        loggedInUser = userData.loggedInUser;
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
+// Access loggedInUser from sessionStorage
+loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || { 
+    events: [], 
+    notes: [], 
+    mealPlan: [] 
+};
+
+async function updateUserData(data) {
+    try {
+        const response = await fetch(jsonBinUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': apiKey
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            console.log('Data updated successfully');
+        } else {
+            console.error('Error updating data:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error updating data:', error);
+    }
+}
+
+function updateSessionUserData(updatedUser) {
+    sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+}
+
 //---------------------------------- Calendar ------------------------------------------------------
-$(document).ready(function () {
+$(document).ready(async function () {
+    await fetchUserData();
+    
     const today = new Date();
     let currentMonth = today.getMonth();
     let currentYear = today.getFullYear();
@@ -30,7 +62,7 @@ $(document).ready(function () {
         "July", "August", "September", "October", "November", "December"
     ];
     
-    let events = JSON.parse(localStorage.getItem("events")) || {};
+    let events = loggedInUser.events || {};
     
     function renderCalendar(month, year) {
         $("#month-year").text(`${months[month]} ${year}`);
@@ -110,12 +142,27 @@ $(document).ready(function () {
         }
     });
 
-    $("#event-form").submit(function (event) {
+    $("#event-form").submit(async function (event) {
         event.preventDefault();
         const date = $("#event-date").val();
-        const desc = $("#event-desc").val();
-        events[date] = desc;
-        // localStorage.setItem("events", JSON.stringify(events));
+        const eventName = $("#event-name").val();
+        const startTime = $("#start-time").val();
+        const endTime = $("#end-time").val();
+        const destination = $("#end").val();
+        const duration = document.getElementById('output').innerText.split('Duration: ')[1];
+
+        events[date] = {
+            eventName,
+            startTime,
+            endTime,
+            destination,
+            duration
+        };
+
+        loggedInUser.events = events;
+        await updateUserData(userData);
+        updateSessionUserData(loggedInUser);
+
         $("#event-modal").css("display", "none");
         renderCalendar(currentMonth, currentYear);
     });
@@ -127,23 +174,30 @@ $(document).ready(function () {
     
     // Function to show event modal with existing event details or for adding new event
     function showEventModal(date) {
-        // Clear distance calculation
-        clearDistanceCalculation();
         $("#event-date").val(date);
         const existingEvent = events[date];
+        clearDistanceCalculation();
         if (existingEvent) {
-            $("#event-desc").val(existingEvent);
+            $("#event-name").val(existingEvent.eventName);
+            $("#start-time").val(existingEvent.startTime);
+            $("#end-time").val(existingEvent.endTime);
+            $("#end").val(existingEvent.destination);
             $(".modal-content").append(`<button id="delete-event" data-event-date="${date}">Delete Event</button>`);
-            $("#delete-event").click(function () {
+            $("#delete-event").click(async function () {
                 const eventDate = $(this).attr("data-event-date");
                 delete events[eventDate];
-                localStorage.setItem("events", JSON.stringify(events));
+                loggedInUser.events = events;
+                await updateUserData(userData);
+                updateSessionUserData(loggedInUser);
                 $("#event-modal").css("display", "none");
                 renderCalendar(currentMonth, currentYear);
             });
         } else {
-            $("#event-desc").val("");
-            $("#delete-event").remove(); // Remove delete button if it exists
+            $("#event-name").val("");
+            $("#start-time").val("");
+            $("#end-time").val("");
+            $("#end").val("");
+            $("#delete-event").remove();
         }
         $("#event-modal").css("display", "block");
     }
@@ -202,44 +256,44 @@ function calculateDistance() {
     });
 }
 
-$(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const date = urlParams.get('date');
-    $("#event-date").val(date);
+// $(document).ready(function () {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const date = urlParams.get('date');
+//     $("#event-date").val(date);
     
-    $("#event-scheduler").submit(function (event) {
-        event.preventDefault();
-        const eventName = $("#event-name").val();
-        const startTime = $("#start-time").val();
-        const endTime = $("#end-time").val();
-        const start = $("#start").val();
-        const end = $("#end").val();
-        const avoidHighways = $("#avoid-highways").is(':checked');
-        const avoidTolls = $("#avoid-tolls").is(':checked');
-        const mode = $("#mode").val();
+//     $("#event-scheduler").submit(function (event) {
+//         event.preventDefault();
+//         const eventName = $("#event-name").val();
+//         const startTime = $("#start-time").val();
+//         const endTime = $("#end-time").val();
+//         const start = $("#start").val();
+//         const end = $("#end").val();
+//         const avoidHighways = $("#avoid-highways").is(':checked');
+//         const avoidTolls = $("#avoid-tolls").is(':checked');
+//         const mode = $("#mode").val();
         
-        const eventDetails = {
-            eventName,
-            startTime,
-            endTime,
-            start,
-            end,
-            avoidHighways,
-            avoidTolls,
-            mode
-        };
+//         const eventDetails = {
+//             eventName,
+//             startTime,
+//             endTime,
+//             start,
+//             end,
+//             avoidHighways,
+//             avoidTolls,
+//             mode
+//         };
         
-        const events = JSON.parse(localStorage.getItem("events")) || {};
-        events[date] = eventDetails;
-        localStorage.setItem("events", JSON.stringify(events));
-    });
-});
+//         const events = JSON.parse(localStorage.getItem("events")) || {};
+//         events[date] = eventDetails;
+//         localStorage.setItem("events", JSON.stringify(events));
+//     });
+// });
 
 loadScript();
 
-document.getElementById("event-form").addEventListener("submit", function (event) {
+document.getElementById("event-form").addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent the form from submitting
-    
+
     // Get form values
     let eventName = document.getElementById("event-name").value;
     let eventDate = document.getElementById("event-date").value;
@@ -247,35 +301,54 @@ document.getElementById("event-form").addEventListener("submit", function (event
     let endTime = document.getElementById("end-time").value;
     let destination = document.getElementById("end").value;
     let duration = document.getElementById("output").innerText.split('Duration: ')[1]; // Assuming the distance calculation is done
-    
+
     // Convert start time to 12-hour format
     let startTime12h = formatTimeTo12H(startTime);
     // Convert end time to 12-hour format
     let endTime12h = formatTimeTo12H(endTime);
-    
+
     // Create list item to display the event
     let eventItem = document.createElement("li");
-    
+
     // Create a span to hold the event details
     let eventDetails = document.createElement("span");
     eventDetails.innerHTML = `<b>${eventName}</b><br>Date: ${eventDate}<br>Time: ${startTime12h} to ${endTime12h}<br>Destination: ${destination}<br>Duration: ${duration}`;
     eventItem.appendChild(eventDetails);
-    
+
     // Create a delete button with a trash icon
     let deleteButton = document.createElement("button");
     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>'; // Using FontAwesome trash icon
     deleteButton.className = 'delete-button';
-    deleteButton.addEventListener("click", function () {
-        eventItem.remove(); // Remove the event item when the delete button is clicked
+    deleteButton.addEventListener("click", async function () {
+        // Remove the event item when the delete button is clicked
+        eventItem.remove();
+
+        // Remove the event from loggedInUser.events and update JSONBin
+        delete loggedInUser.events[eventDate];
+        await updateUserData(userData);
+        updateSessionUserData(loggedInUser);
     });
-    
+
     eventItem.appendChild(deleteButton);
-    
+
     // Append the event item to the events list
     document.getElementById("events").appendChild(eventItem);
-    
+
     // Clear form inputs after adding event
     document.getElementById("event-form").reset();
+
+    // Add event to loggedInUser.events
+    loggedInUser.events[eventDate] = {
+        eventName,
+        startTime,
+        endTime,
+        destination,
+        duration
+    };
+
+    // Update JSONBin with the new data
+    await updateUserData(userData);
+    updateSessionUserData(loggedInUser);
 });
 
 // Function to convert time to 12-hour format
@@ -283,12 +356,47 @@ function formatTimeTo12H(time) {
     let formattedTime = new Date("2000-01-01T" + time + ":00Z").toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
     return formattedTime;
 }
+
+
+
+document.addEventListener("DOMContentLoaded", async function () {
+    await fetchUserData();
+    renderEvents();
+});
+function renderEvents() {
+    const events = loggedInUser.events || {};
+    const eventsList = document.getElementById("events");
+    eventsList.innerHTML = "";
+
+    for (const [date, eventDetails] of Object.entries(events)) {
+        const eventItem = document.createElement("li");
+        const eventDetail = document.createElement("span");
+        const startTime12h = formatTimeTo12H(eventDetails.startTime);
+        const endTime12h = formatTimeTo12H(eventDetails.endTime);
+
+        eventDetail.innerHTML = `<b>${eventDetails.eventName}</b><br>Date: ${date}<br>Time: ${startTime12h} to ${endTime12h}<br>Destination: ${eventDetails.destination}<br>Duration: ${eventDetails.duration}`;
+        eventItem.appendChild(eventDetail);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>'; // Using FontAwesome trash icon
+        deleteButton.className = 'delete-button';
+        deleteButton.addEventListener("click", async function () {
+            eventItem.remove();
+            delete loggedInUser.events[date];
+            await updateUserData(userData);
+            updateSessionUserData(loggedInUser);
+        });
+
+        eventItem.appendChild(deleteButton);
+        eventsList.appendChild(eventItem);
+    }
+}
+
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-// Access loggedInUser from sessionStorage
-loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || { notes: [] };
+
 
 
 //-------------------------------------------------------------------------notes----------------------------------------------------------------------------
@@ -343,29 +451,7 @@ document.getElementById('save-button').addEventListener('click', async function 
     }
 });
 
-async function updateUserData(data) {
-    try {
-        const response = await fetch(jsonBinUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': apiKey
-            },
-            body: JSON.stringify(data)
-        });
-        if (response.ok) {
-            console.log('Data updated successfully');
-        } else {
-            console.error('Error updating data:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error updating data:', error);
-    }
-}
 
-function updateSessionUserData(updatedUser) {
-    sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-}
 //------------------------------------------------------------------------------------------------------------------------------------
 
 

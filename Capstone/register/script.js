@@ -35,7 +35,7 @@ async function addUser() {
         username: newUsername,
         password: newPassword,
         email: newEmail,
-        calendarEvents: [],
+        events: [],
         mealPlans: [],
         notes: []
     };

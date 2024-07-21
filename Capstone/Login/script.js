@@ -30,28 +30,15 @@ async function login() {
 
     if (loggedInUser) {
         alert('Logging in');
-        displayUserData(loggedInUser);
+        handleLoginSuccess(loggedInUser);
     } else {
         alert('Invalid username or password');
     }
 }
 
-function displayUserData(user) {
-    // const userDataDiv = document.getElementById('userData');
-    // alert(`Username: ${user.username} 
-    //     Email: ${user.email} 
-    //     Password: ${user.password}`);
-    
-    sessionStorage.setItem('loggedInUser', JSON.stringify(userData));
-	window.location.href = '../calendar2';
-
-    // userDataDiv.innerHTML = `<div class="user-info">
-    //                         <h2>Username: ${user.username}</h2>
-    //                         <p>Email: ${user.email}</p>
-    //                         <p>Password: ${user.password}</p>
-    //                         <h3>Notes:</h3>
-    //                         <div id="notesList"></div>
-    //                         </div>`;
+function handleLoginSuccess(user) {
+    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+    window.location.href = '../calendar2';
 }
 
 window.onload = fetchUserData;
