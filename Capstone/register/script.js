@@ -13,29 +13,30 @@ async function fetchUserData() {
         });
         const data = await response.json();
         userData = data.record;
+        // alert(JSON.stringify(userData));
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
-function usernameExists(username){
- return userData.some(user => user.username === username);
-}
+// function usernameExists(username){
+//  return userData.find(user => user.username === username) !==undefined;
+// }
 
 async function addUser() {
     const newUsername = document.getElementById('newUsername').value;
     const newPassword = document.getElementById('newPassword').value;
     const newEmail = document.getElementById('newEmail').value;
 
-   
-    // // Check if username already exists
-    // const usernameExists = userData.some(user => user.username === newUsername);
+   alert(newUsername);
+    // Check if username already exists
+    const usernameExists = userData.some(user => user.username === newUsername);
 
-    if (usernameExists(newUsername)) {
-        alert('Username already used');
-        return;
-    }
-    alert("new user");
+    // if (usernameExists(newUsername)) {
+    //     alert('Username already used');
+    //     return;
+    // }
+    // alert("new user");
 
     const newUser = {
         username: newUsername,

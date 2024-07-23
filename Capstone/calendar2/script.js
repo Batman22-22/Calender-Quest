@@ -1,8 +1,12 @@
 const jsonBinUrl = 'https://api.jsonbin.io/v3/b/6699d64facd3cb34a868209e'; // Corrected JSONBin URL
 const apiKey = '$2a$10$PAC1aWUZ1v6nYdASdlU9T.pSkUw29Ys.uKrdoYRZVL36dlUzxLRgK'; // Your API key
 
-let userData = null;
-let loggedInUser = null;
+// let userData = null;
+let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || { 
+    events: [], 
+    notes: [], 
+    mealPlan: [] 
+};
 
 async function fetchUserData() {
     try {
@@ -12,20 +16,16 @@ async function fetchUserData() {
             }
         });
         const data = await response.json();
-        loggedInUser = userData.loggedInUser;
+        userData = data.record;
+        console.log(userData);
+        loggedInUser = userData.loggedInUser || loggedInUser;
+        sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
-// Access loggedInUser from sessionStorage
-loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || { 
-    events: [], 
-    notes: [], 
-    mealPlan: [] 
-};
-
-async function updateUserData(data) {
+async function updateUserData(userData) {
     try {
         const response = await fetch(jsonBinUrl, {
             method: 'PUT',
@@ -33,7 +33,7 @@ async function updateUserData(data) {
                 'Content-Type': 'application/json',
                 'X-Master-Key': apiKey
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(userData)
         });
         if (response.ok) {
             console.log('Data updated successfully');
@@ -412,6 +412,8 @@ document.getElementById('save-button').addEventListener('click', async function 
 
         // Add note to loggedInUser.notes
         loggedInUser.notes.push({ id: noteId, content: noteContent });
+
+        
 
         // Create and display note element
         const note = document.createElement('div');
