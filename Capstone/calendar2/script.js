@@ -336,15 +336,17 @@ document.getElementById("event-form").addEventListener("submit", async function 
 
     // Clear form inputs after adding event
     document.getElementById("event-form").reset();
-
+        
+        
     // Add event to loggedInUser.events
-    loggedInUser.events[eventDate] = {
-        eventName,
-        startTime,
-        endTime,
-        destination,
-        duration
-    };
+    loggedInUser.events.push({
+        date: eventDate,
+        eventName: eventName,
+        startTime: startTime12h,
+        endTime: endTime12h,
+        destination: destination,
+        duration: duration 
+    });
 
     // Update JSONBin with the new data
     await updateUserData(userData);
@@ -836,14 +838,6 @@ document.addEventListener("DOMContentLoaded", function () {
     init();
 });
 //------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
 
 // function displayUserData(users) {
 //         const userDataDiv = document.getElementById('userData');

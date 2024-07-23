@@ -18,18 +18,24 @@ async function fetchUserData() {
     }
 }
 
+function usernameExists(username){
+ return userData.some(user => user.username === username);
+}
+
 async function addUser() {
     const newUsername = document.getElementById('newUsername').value;
     const newPassword = document.getElementById('newPassword').value;
     const newEmail = document.getElementById('newEmail').value;
 
-    // Check if username already exists
-    const usernameExists = userData.some(user => user.username === newUsername);
+   
+    // // Check if username already exists
+    // const usernameExists = userData.some(user => user.username === newUsername);
 
-    if (usernameExists) {
+    if (usernameExists(newUsername)) {
         alert('Username already used');
         return;
     }
+    alert("new user");
 
     const newUser = {
         username: newUsername,
