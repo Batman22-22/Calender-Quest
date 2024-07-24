@@ -37,8 +37,18 @@ async function login() {
 }
 
 function handleLoginSuccess(user) {
+    // Clear existing session data
+    sessionStorage.removeItem('loggedInUsername');
+    sessionStorage.removeItem('loggedInUser');
+
+    // Store new session data
+    sessionStorage.setItem('loggedInUsername', JSON.stringify(user.username));
     sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+
+    // Redirect to the calendar page
     window.location.href = '../calendar2';
 }
 
-window.onload = fetchUserData;
+window.onload = async function () {
+    await fetchUserData();
+};

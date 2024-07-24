@@ -1,7 +1,9 @@
 const jsonBinUrl = 'https://api.jsonbin.io/v3/b/6699d64facd3cb34a868209e'; // Corrected JSONBin URL
 const apiKey = '$2a$10$PAC1aWUZ1v6nYdASdlU9T.pSkUw29Ys.uKrdoYRZVL36dlUzxLRgK'; // Your API key
 
-// let userData = null;
+let userData = null;
+// let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUsername'));
+
 let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || { 
     events: [], 
     notes: [], 
@@ -16,16 +18,24 @@ async function fetchUserData() {
             }
         });
         const data = await response.json();
-        userData = data.record;
-        console.log(userData);
-        loggedInUser = userData.loggedInUser || loggedInUser;
-        sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+        userData = data.record || [];
+
+        const storedUsername = sessionStorage.getItem('loggedInUsername');
+
+        if (storedUsername) {
+            loggedInUser = userData.find(user => user.username === storedUsername) || loggedInUser;
+            sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+            console.log('Logged in user data:', loggedInUser);
+        } else {
+            console.warn('No logged-in username found in session storage.');
+        }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
 
-async function updateUserData(userData) {
+
+async function updateUserData() {
     try {
         const response = await fetch(jsonBinUrl, {
             method: 'PUT',
@@ -44,6 +54,11 @@ async function updateUserData(userData) {
         console.error('Error updating data:', error);
     }
 }
+
+function updateSessionUserData(updatedUser) {
+    sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+}
+
 
 function updateSessionUserData(updatedUser) {
     sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
@@ -127,10 +142,7 @@ $(document).ready(async function () {
         }
         renderCalendar(currentMonth, currentYear);
     });
-    //-------------------------------------------------------------------------------------------------
-
-
-
+    
     //------------------------------------------------event modal---------------------------------------------------
     $(".close").click(function () {
         $("#event-modal").css("display", "none");
@@ -143,34 +155,37 @@ $(document).ready(async function () {
     });
 
     $("#event-form").submit(async function (event) {
-        event.preventDefault();
-        const date = $("#event-date").val();
-        const eventName = $("#event-name").val();
-        const startTime = $("#start-time").val();
-        const endTime = $("#end-time").val();
-        const destination = $("#end").val();
-        const duration = document.getElementById('output').innerText.split('Duration: ')[1];
+    event.preventDefault();
 
-        events[date] = {
-            eventName,
-            startTime,
-            endTime,
-            destination,
-            duration
-        };
+    const date = $("#event-date").val();
+    const eventName = $("#event-name").val();
+    const startTime = $("#start-time").val();
+    const endTime = $("#end-time").val();
+    const destination = $("#end").val();
+    const duration = document.getElementById('output').innerText.split('Duration: ')[1];
 
-        loggedInUser.events = events;
-        await updateUserData(userData);
-        updateSessionUserData(loggedInUser);
+    // Ensure that the events are properly formatted and added
+    loggedInUser.events.push({ date, eventName, startTime, endTime, destination, duration });
 
-        $("#event-modal").css("display", "none");
-        renderCalendar(currentMonth, currentYear);
-    });
+    // Update userData and session storage
+    const userIndex = userData.findIndex(user => user.username === loggedInUser.username);
+    if (userIndex > -1) {
+        userData[userIndex] = loggedInUser;
+    } else {
+        userData.push(loggedInUser);
+    }
+    
+    await updateUserData();
+    updateSessionUserData(loggedInUser);
+
+    $("#event-modal").css("display", "none");
+    renderCalendar(currentMonth, currentYear);
+});
+
     
     function clearDistanceCalculation() {
         document.getElementById('output').innerHTML = '';
     }
-    
     
     // Function to show event modal with existing event details or for adding new event
     function showEventModal(date) {
@@ -255,40 +270,6 @@ function calculateDistance() {
         }
     });
 }
-
-// $(document).ready(function () {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const date = urlParams.get('date');
-//     $("#event-date").val(date);
-    
-//     $("#event-scheduler").submit(function (event) {
-//         event.preventDefault();
-//         const eventName = $("#event-name").val();
-//         const startTime = $("#start-time").val();
-//         const endTime = $("#end-time").val();
-//         const start = $("#start").val();
-//         const end = $("#end").val();
-//         const avoidHighways = $("#avoid-highways").is(':checked');
-//         const avoidTolls = $("#avoid-tolls").is(':checked');
-//         const mode = $("#mode").val();
-        
-//         const eventDetails = {
-//             eventName,
-//             startTime,
-//             endTime,
-//             start,
-//             end,
-//             avoidHighways,
-//             avoidTolls,
-//             mode
-//         };
-        
-//         const events = JSON.parse(localStorage.getItem("events")) || {};
-//         events[date] = eventDetails;
-//         localStorage.setItem("events", JSON.stringify(events));
-//     });
-// });
-
 loadScript();
 
 document.getElementById("event-form").addEventListener("submit", async function (event) {
@@ -359,8 +340,6 @@ function formatTimeTo12H(time) {
     return formattedTime;
 }
 
-
-
 document.addEventListener("DOMContentLoaded", async function () {
     await fetchUserData();
     renderEvents();
@@ -393,15 +372,39 @@ function renderEvents() {
         eventsList.appendChild(eventItem);
     }
 }
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
 //-------------------------------------------------------------------------notes----------------------------------------------------------------------------
+function displayNotes() {
+    const notesContainer = document.getElementById('notes-container');
+    notesContainer.innerHTML = '';
+
+    if (loggedInUser && loggedInUser.notes) {
+        loggedInUser.notes.forEach(note => {
+            const noteElement = document.createElement('div');
+            noteElement.className = 'note';
+
+            const noteText = document.createElement('span');
+            noteText.textContent = note.content;
+
+            const removeIcon = document.createElement('i');
+            removeIcon.className = 'fas fa-trash-alt remove-icon';
+            removeIcon.addEventListener('click', async function () {
+                notesContainer.removeChild(noteElement);
+
+                const noteIndex = loggedInUser.notes.findIndex(n => n.id === note.id);
+                if (noteIndex > -1) {
+                    loggedInUser.notes.splice(noteIndex, 1);
+                    await updateUserData();
+                    updateSessionUserData(loggedInUser);
+                }
+            });
+
+            noteElement.appendChild(noteText);
+            noteElement.appendChild(removeIcon);
+            notesContainer.appendChild(noteElement);
+        });
+    }
+}
+
 document.getElementById('save-button').addEventListener('click', async function () {
     const noteInput = document.getElementById('note-input');
     const notesContainer = document.getElementById('notes-container');
@@ -413,7 +416,16 @@ document.getElementById('save-button').addEventListener('click', async function 
         // Add note to loggedInUser.notes
         loggedInUser.notes.push({ id: noteId, content: noteContent });
 
-        
+        // Update userData and session storage
+        const userIndex = userData.findIndex(user => user.username === loggedInUser.username);
+        if (userIndex > -1) {
+            userData[userIndex] = loggedInUser;
+        } else {
+            userData.push(loggedInUser);
+        }
+
+        await updateUserData();
+        updateSessionUserData(loggedInUser);
 
         // Create and display note element
         const note = document.createElement('div');
@@ -425,17 +437,12 @@ document.getElementById('save-button').addEventListener('click', async function 
         const removeIcon = document.createElement('i');
         removeIcon.className = 'fas fa-trash-alt remove-icon';
         removeIcon.addEventListener('click', async function () {
-            // Remove note from DOM
             notesContainer.removeChild(note);
 
-            // Find the index of the note to delete
             const noteIndex = loggedInUser.notes.findIndex(note => note.id === noteId);
             if (noteIndex > -1) {
-                // Remove note from loggedInUser.notes
                 loggedInUser.notes.splice(noteIndex, 1);
-
-                // Update user data
-                await updateUserData(loggedInUser);
+                await updateUserData();
                 updateSessionUserData(loggedInUser);
             }
         });
@@ -444,31 +451,11 @@ document.getElementById('save-button').addEventListener('click', async function 
         note.appendChild(removeIcon);
         notesContainer.appendChild(note);
 
-        // Clear input field
         noteInput.value = '';
-
-        // Update user data
-        await updateUserData(loggedInUser);
-        updateSessionUserData(loggedInUser);
     } else {
         alert('Please enter a note before saving.');
     }
 });
-
-
-//------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //----------------------------------------------------------------meal plan------------------------------------------------------------------------------
@@ -839,48 +826,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the application
     init();
 });
-//------------------------------------------------------------------------------------------------------------------------------------------------------
+// window.onload = fetchUserData();
+window.onload = async function () {
+    await fetchUserData();
 
-// function displayUserData(users) {
-//         const userDataDiv = document.getElementById('userData');
-//         users.forEach(user => {
-//             let userInfo = `<div class="user-info">
-//                                 <h2>Username: ${user.username}</h2>
-//                                 <p>Email: ${user.email}</p>
-//                                 <p>Password: ${user.password}</p>`;
-            
-//             userInfo += `<h3>Calendar Events:</h3>`;
-//             user.calendarEvents.forEach(event => {
-//                 userInfo += `<div class="event">
-//                                 <p>Date: ${event.date}</p>
-//                                 <p>Event Name: ${event.eventName}</p>
-//                                 <p>Start Time: ${event.startTime}</p>
-//                                 <p>End Time: ${event.endTime}</p>
-//                                 <p>Destination: ${event.destination}</p>
-//                                 <p>Duration: ${event.duration}</p>
-//                             </div>`;
-//             });
-    
-//             userInfo += `<h3>Meal Plans:</h3>`;
-//             user.mealPlans.forEach(plan => {
-//                 userInfo += `<div class="meal-plan">
-//                                 <p>Meal Plan Name: ${plan.name}</p>
-//                                 <p>Meals: ${plan.meals.map(meal => `${meal.day}: ${meal.meals}`).join(', ')}</p>
-//                             </div>`;
-//             });
-    
-//             userInfo += `<h3>Notes:</h3>`;
-//             user.notes.forEach(note => {
-//                 userInfo += `<div class="note">
-//                                 <p>Note ID: ${note.id}</p>
-//                                 <p>Content: ${note.content}</p>
-//                             </div>`;
-//             });
-    
-//             userInfo += `</div>`;
-//             userDataDiv.innerHTML += userInfo;
-//         });
-//     }
-
-
-window.onload = fetchUserData;
+    const storedUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    if (storedUser) {
+        loggedInUser = storedUser;
+        displayNotes();
+    }
+};
