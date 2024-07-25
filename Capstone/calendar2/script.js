@@ -2,12 +2,10 @@ const jsonBinUrl = 'https://api.jsonbin.io/v3/b/6699d64facd3cb34a868209e'; // Co
 const apiKey = '$2a$10$PAC1aWUZ1v6nYdASdlU9T.pSkUw29Ys.uKrdoYRZVL36dlUzxLRgK'; // Your API key
 
 let userData = null;
-// let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUsername'));
-
-let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || { 
-    events: [], 
-    notes: [], 
-    mealPlan: [] 
+let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || {
+    events: [],
+    notes: [],
+    mealPlan: []
 };
 
 async function fetchUserData() {
@@ -34,7 +32,6 @@ async function fetchUserData() {
     }
 }
 
-
 async function updateUserData() {
     try {
         const response = await fetch(jsonBinUrl, {
@@ -59,39 +56,32 @@ function updateSessionUserData(updatedUser) {
     sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
 }
 
-
-function updateSessionUserData(updatedUser) {
-    sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-}
-
 //---------------------------------- Calendar ------------------------------------------------------
 $(document).ready(async function () {
     await fetchUserData();
-    
+
     const today = new Date();
     let currentMonth = today.getMonth();
     let currentYear = today.getFullYear();
-    
+
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    
-    let events = loggedInUser.events || {};
-    
+
     function renderCalendar(month, year) {
         $("#month-year").text(`${months[month]} ${year}`);
-        
+
         const firstDay = new Date(year, month).getDay();
         const daysInMonth = 32 - new Date(year, month, 32).getDate();
-        
+
         let table = $("#calendar-body");
         table.empty();
-        
+
         let date = 1;
         for (let i = 0; i < 6; i++) {
             let row = $("<tr></tr>");
-            
+
             for (let j = 0; j < 7; j++) {
                 if (i === 0 && j < firstDay) {
                     let cell = $("<td class='empty'></td>");
@@ -106,8 +96,9 @@ $(document).ready(async function () {
                     if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
                         cell.addClass("active");
                     }
-                    if (events[`${year}-${month + 1}-${date}`]) {
-                        let event = $("<div class='event'></div>").text(events[`${year}-${month + 1}-${date}`]);
+                    const eventForDate = loggedInUser.events.find(event => event.date === `${year}-${month + 1}-${date}`);
+                    if (eventForDate) {
+                        let event = $("<div class='event'></div>").text(eventForDate.eventName);
                         cell.append(event);
                     }
                     cell.click(function () {
@@ -122,7 +113,7 @@ $(document).ready(async function () {
             table.append(row);
         }
     }
-    
+
     $("#prev").click(function () {
         if (currentMonth === 0) {
             currentMonth = 11;
@@ -132,7 +123,7 @@ $(document).ready(async function () {
         }
         renderCalendar(currentMonth, currentYear);
     });
-    
+
     $("#next").click(function () {
         if (currentMonth === 11) {
             currentMonth = 0;
@@ -142,12 +133,12 @@ $(document).ready(async function () {
         }
         renderCalendar(currentMonth, currentYear);
     });
-    
+
     //------------------------------------------------event modal---------------------------------------------------
     $(".close").click(function () {
         $("#event-modal").css("display", "none");
     });
-    
+
     $(window).click(function (event) {
         if (event.target === document.getElementById("event-modal")) {
             $("#event-modal").css("display", "none");
@@ -155,42 +146,47 @@ $(document).ready(async function () {
     });
 
     $("#event-form").submit(async function (event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const date = $("#event-date").val();
-    const eventName = $("#event-name").val();
-    const startTime = $("#start-time").val();
-    const endTime = $("#end-time").val();
-    const destination = $("#end").val();
-    const duration = document.getElementById('output').innerText.split('Duration: ')[1];
+        const date = $("#event-date").val();
+        const eventName = $("#event-name").val();
+        const startTime = $("#start-time").val();
+        const endTime = $("#end-time").val();
+        const destination = $("#end").val();
+        const duration = document.getElementById('output').innerText.split('Duration: ')[1] || "";
 
-    // Ensure that the events are properly formatted and added
-    loggedInUser.events.push({ date, eventName, startTime, endTime, destination, duration });
+        const newEvent = { date, eventName, startTime, endTime, destination, duration };
 
-    // Update userData and session storage
-    const userIndex = userData.findIndex(user => user.username === loggedInUser.username);
-    if (userIndex > -1) {
-        userData[userIndex] = loggedInUser;
-    } else {
-        userData.push(loggedInUser);
-    }
-    
-    await updateUserData();
-    updateSessionUserData(loggedInUser);
+        // Add or update the event
+        const eventIndex = loggedInUser.events.findIndex(event => event.date === date);
+        if (eventIndex > -1) {
+            loggedInUser.events[eventIndex] = newEvent;
+        } else {
+            loggedInUser.events.push(newEvent);
+        }
 
-    $("#event-modal").css("display", "none");
-    renderCalendar(currentMonth, currentYear);
-});
+        // Update userData and session storage
+        const userIndex = userData.findIndex(user => user.username === loggedInUser.username);
+        if (userIndex > -1) {
+            userData[userIndex] = loggedInUser;
+        } else {
+            userData.push(loggedInUser);
+        }
 
-    
+        await updateUserData();
+        updateSessionUserData(loggedInUser);
+
+        $("#event-modal").css("display", "none");
+        renderCalendar(currentMonth, currentYear);
+    });
+
     function clearDistanceCalculation() {
         document.getElementById('output').innerHTML = '';
     }
-    
-    // Function to show event modal with existing event details or for adding new event
+
     function showEventModal(date) {
         $("#event-date").val(date);
-        const existingEvent = events[date];
+        const existingEvent = loggedInUser.events.find(event => event.date === date);
         clearDistanceCalculation();
         if (existingEvent) {
             $("#event-name").val(existingEvent.eventName);
@@ -200,9 +196,8 @@ $(document).ready(async function () {
             $(".modal-content").append(`<button id="delete-event" data-event-date="${date}">Delete Event</button>`);
             $("#delete-event").click(async function () {
                 const eventDate = $(this).attr("data-event-date");
-                delete events[eventDate];
-                loggedInUser.events = events;
-                await updateUserData(userData);
+                loggedInUser.events = loggedInUser.events.filter(event => event.date !== eventDate);
+                await updateUserData();
                 updateSessionUserData(loggedInUser);
                 $("#event-modal").css("display", "none");
                 renderCalendar(currentMonth, currentYear);
@@ -216,7 +211,7 @@ $(document).ready(async function () {
         }
         $("#event-modal").css("display", "block");
     }
-    
+
     renderCalendar(currentMonth, currentYear);
 });
 
@@ -244,7 +239,7 @@ function calculateDistance() {
     var avoidHighways = document.getElementById('avoid-highways').checked;
     var avoidTolls = document.getElementById('avoid-tolls').checked;
     var mode = document.getElementById('mode').value;
-    
+
     var service = new google.maps.DistanceMatrixService();
     service.getDistanceMatrix({
         origins: [origin],
@@ -281,7 +276,7 @@ document.getElementById("event-form").addEventListener("submit", async function 
     let startTime = document.getElementById("start-time").value;
     let endTime = document.getElementById("end-time").value;
     let destination = document.getElementById("end").value;
-    let duration = document.getElementById("output").innerText.split('Duration: ')[1]; // Assuming the distance calculation is done
+    let duration = document.getElementById("output").innerText.split('Duration: ')[1] || "";
 
     // Convert start time to 12-hour format
     let startTime12h = formatTimeTo12H(startTime);
@@ -305,8 +300,8 @@ document.getElementById("event-form").addEventListener("submit", async function 
         eventItem.remove();
 
         // Remove the event from loggedInUser.events and update JSONBin
-        delete loggedInUser.events[eventDate];
-        await updateUserData(userData);
+        loggedInUser.events = loggedInUser.events.filter(event => event.date !== eventDate);
+        await updateUserData();
         updateSessionUserData(loggedInUser);
     });
 
@@ -317,8 +312,7 @@ document.getElementById("event-form").addEventListener("submit", async function 
 
     // Clear form inputs after adding event
     document.getElementById("event-form").reset();
-        
-        
+
     // Add event to loggedInUser.events
     loggedInUser.events.push({
         date: eventDate,
@@ -326,11 +320,11 @@ document.getElementById("event-form").addEventListener("submit", async function 
         startTime: startTime12h,
         endTime: endTime12h,
         destination: destination,
-        duration: duration 
+        duration: duration
     });
 
     // Update JSONBin with the new data
-    await updateUserData(userData);
+    await updateUserData();
     updateSessionUserData(loggedInUser);
 });
 
@@ -344,18 +338,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     await fetchUserData();
     renderEvents();
 });
+
 function renderEvents() {
-    const events = loggedInUser.events || {};
+    const events = loggedInUser.events || [];
     const eventsList = document.getElementById("events");
     eventsList.innerHTML = "";
 
-    for (const [date, eventDetails] of Object.entries(events)) {
+    for (const event of events) {
         const eventItem = document.createElement("li");
         const eventDetail = document.createElement("span");
-        const startTime12h = formatTimeTo12H(eventDetails.startTime);
-        const endTime12h = formatTimeTo12H(eventDetails.endTime);
+        const startTime12h = formatTimeTo12H(event.startTime);
+        const endTime12h = formatTimeTo12H(event.endTime);
 
-        eventDetail.innerHTML = `<b>${eventDetails.eventName}</b><br>Date: ${date}<br>Time: ${startTime12h} to ${endTime12h}<br>Destination: ${eventDetails.destination}<br>Duration: ${eventDetails.duration}`;
+        eventDetail.innerHTML = `<b>${event.eventName}</b><br>Date: ${event.date}<br>Time: ${startTime12h} to ${endTime12h}<br>Destination: ${event.destination}<br>Duration: ${event.duration}`;
         eventItem.appendChild(eventDetail);
 
         const deleteButton = document.createElement("button");
@@ -363,8 +358,8 @@ function renderEvents() {
         deleteButton.className = 'delete-button';
         deleteButton.addEventListener("click", async function () {
             eventItem.remove();
-            delete loggedInUser.events[date];
-            await updateUserData(userData);
+            loggedInUser.events = loggedInUser.events.filter(e => e.date !== event.date);
+            await updateUserData();
             updateSessionUserData(loggedInUser);
         });
 
@@ -372,6 +367,7 @@ function renderEvents() {
         eventsList.appendChild(eventItem);
     }
 }
+
 //-------------------------------------------------------------------------notes----------------------------------------------------------------------------
 function displayNotes() {
     const notesContainer = document.getElementById('notes-container');
@@ -393,8 +389,12 @@ function displayNotes() {
                 const noteIndex = loggedInUser.notes.findIndex(n => n.id === note.id);
                 if (noteIndex > -1) {
                     loggedInUser.notes.splice(noteIndex, 1);
-                    await updateUserData();
-                    updateSessionUserData(loggedInUser);
+                    try {
+                        await updateUserData(); // Ensure this function updates the backend or storage
+                        updateSessionUserData(loggedInUser); // Ensure session data is updated
+                    } catch (error) {
+                        console.error('Error updating user data:', error);
+                    }
                 }
             });
 
@@ -410,7 +410,7 @@ document.getElementById('save-button').addEventListener('click', async function 
     const notesContainer = document.getElementById('notes-container');
 
     if (noteInput.value.trim() !== '') {
-        const noteId = `note${loggedInUser.notes.length + 1}`;
+        const noteId = `note${Date.now()}`; // Unique ID using timestamp
         const noteContent = noteInput.value;
 
         // Add note to loggedInUser.notes
@@ -424,12 +424,16 @@ document.getElementById('save-button').addEventListener('click', async function 
             userData.push(loggedInUser);
         }
 
-        await updateUserData();
-        updateSessionUserData(loggedInUser);
+        try {
+            await updateUserData(); // Ensure this function updates the backend or storage
+            updateSessionUserData(loggedInUser); // Ensure session data is updated
+        } catch (error) {
+            console.error('Error updating user data:', error);
+        }
 
         // Create and display note element
-        const note = document.createElement('div');
-        note.className = 'note';
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note';
 
         const noteText = document.createElement('span');
         noteText.textContent = noteContent;
@@ -437,19 +441,23 @@ document.getElementById('save-button').addEventListener('click', async function 
         const removeIcon = document.createElement('i');
         removeIcon.className = 'fas fa-trash-alt remove-icon';
         removeIcon.addEventListener('click', async function () {
-            notesContainer.removeChild(note);
+            notesContainer.removeChild(noteElement);
 
-            const noteIndex = loggedInUser.notes.findIndex(note => note.id === noteId);
+            const noteIndex = loggedInUser.notes.findIndex(n => n.id === noteId);
             if (noteIndex > -1) {
                 loggedInUser.notes.splice(noteIndex, 1);
-                await updateUserData();
-                updateSessionUserData(loggedInUser);
+                try {
+                    await updateUserData(); // Ensure this function updates the backend or storage
+                    updateSessionUserData(loggedInUser); // Ensure session data is updated
+                } catch (error) {
+                    console.error('Error updating user data:', error);
+                }
             }
         });
 
-        note.appendChild(noteText);
-        note.appendChild(removeIcon);
-        notesContainer.appendChild(note);
+        noteElement.appendChild(noteText);
+        noteElement.appendChild(removeIcon);
+        notesContainer.appendChild(noteElement);
 
         noteInput.value = '';
     } else {
@@ -458,18 +466,19 @@ document.getElementById('save-button').addEventListener('click', async function 
 });
 
 
+
 //----------------------------------------------------------------meal plan------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
     let mealPlans = [];
     let nextMealPlanNumber = 1;
-    
+
     // Initialize the application
     function init() {
         loadMealPlans();
         attachEventListeners();
         displayMealPlans();
     }
-    
+
     // Load meal plans from localStorage
     function loadMealPlans() {
         try {
@@ -483,7 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("There was an error loading your meal plans. Please try refreshing the page.");
         }
     }
-    
+
     // Attach event listeners
     function attachEventListeners() {
         document.getElementById("createMealPlanBtn").addEventListener("click", openCreateModal);
@@ -493,14 +502,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("exportMealPlansBtn").addEventListener("click", exportMealPlans);
         document.getElementById("importMealPlansBtn").addEventListener("change", importMealPlans);
     }
-    
+
     // Open create modal
     function openCreateModal() {
         document.getElementById("mealPlanForm").reset();
         document.getElementById("modalTitle").textContent = "Create Meal Plan";
         openModal("mealPlanModal");
     }
-    
+
     // Generate surprise meal plan
     function generateSurpriseMealPlan() {
         const vegetarian = confirm("Are you a vegetarian?");
@@ -511,7 +520,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateNextMealPlanNumber();
         displayMealPlans();
     }
-    
+
     // Save meal plan
     function saveMealPlan() {
         const planName = document.getElementById("planName").value.trim();
@@ -519,24 +528,24 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please enter a meal plan name.");
             return;
         }
-        
+
         const meals = getDaysOfWeek().map(day => ({
             day: day,
             meals: document.getElementById(day.toLowerCase()).value.trim()
         }));
-        
+
         const mealPlan = {
             id: generateId(),
             name: planName,
             meals: meals
         };
-        
+
         mealPlans.push(mealPlan);
         saveMealPlans();
         displayMealPlans();
         closeModal("mealPlanModal");
     }
-    
+
     // Generate random meal plan
     function generateRandomMealPlan(vegetarian, heavyEater) {
         const planMeals = getDaysOfWeek().map(day => ({
@@ -547,7 +556,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 generateRandomMeal('Dinner', vegetarian, heavyEater)
             ].join(', ')
         }));
-        
+
         return {
             id: generateId(),
             name: `Meal_${nextMealPlanNumber}`,
@@ -562,14 +571,14 @@ document.addEventListener("DOMContentLoaded", function () {
             'Lunch': vegetarian ? ['Grilled vegetable sandwich', 'Quinoa salad', 'Lentil soup'] : ['Chicken salad', 'Turkey wrap', 'Steak sandwich'],
             'Dinner': vegetarian ? ['Vegetable stir-fry', 'Pasta primavera', 'Vegetarian chili'] : ['Grilled salmon', 'Beef stew', 'Chicken curry']
         };
-        
+
         const meals = mealsDatabase[mealType];
         const randomMeal = meals[Math.floor(Math.random() * meals.length)];
         const portionSize = heavyEater ? 'Large portion of ' : 'Small portion of ';
-        
+
         return portionSize + randomMeal;
     }
-    
+
     // Update next meal plan number
     function updateNextMealPlanNumber() {
         nextMealPlanNumber = Math.max(...mealPlans.map(plan => {
@@ -577,12 +586,12 @@ document.addEventListener("DOMContentLoaded", function () {
             return isNaN(number) ? 0 : number;
         })) + 1;
     }
-    
+
     // Display meal plans
     function displayMealPlans(filteredPlans) {
         const plansList = document.getElementById("mealPlansList");
         plansList.innerHTML = "";
-        
+
         (filteredPlans || mealPlans).forEach(plan => {
             const planItem = document.createElement("li");
             planItem.classList.add("meal-plan-item");
@@ -596,14 +605,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 createButton('Share', () => shareMealPlan(plan.id)),
                 createButton('View Meal Plan', () => viewMealPlan(plan.id))
             ];
-            
+
             planItem.appendChild(planName);
             buttons.forEach(button => planItem.appendChild(button));
-            
+
             plansList.appendChild(planItem);
         });
     }
-    
+
     // Create button helper function
     function createButton(text, onClickFunction) {
         const button = document.createElement("button");
@@ -614,7 +623,7 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", onClickFunction);
         return button;
     }
-    
+
     // Edit meal plan
     function editMealPlan(planId) {
         const plan = mealPlans.find(plan => plan.id === planId);
@@ -625,25 +634,25 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             document.getElementById("modalTitle").textContent = "Edit Meal Plan";
             openModal("mealPlanModal");
-            
+
             document.getElementById("saveMealPlanBtn").onclick = function () {
                 updateMealPlan(plan);
             };
         }
     }
-    
+
     // Update meal plan
     function updateMealPlan(plan) {
         plan.name = document.getElementById("planName").value.trim();
         plan.meals.forEach(meal => {
             meal.meals = document.getElementById(meal.day.toLowerCase()).value.trim();
         });
-        
+
         saveMealPlans();
         displayMealPlans();
         closeModal("mealPlanModal");
     }
-    
+
     // Delete meal plan
     function deleteMealPlan(planId) {
         if (confirm("Are you sure you want to delete this meal plan?")) {
@@ -652,7 +661,7 @@ document.addEventListener("DOMContentLoaded", function () {
             displayMealPlans();
         }
     }
-    
+
     // Share meal plan
     function shareMealPlan(planId) {
         const plan = mealPlans.find(plan => plan.id === planId);
@@ -661,7 +670,7 @@ document.addEventListener("DOMContentLoaded", function () {
             plan.meals.forEach(meal => {
                 shareText += `${meal.day}\n${meal.meals}\n\n`;
             });
-            
+
             if (navigator.share) {
                 navigator.share({
                     title: plan.name,
@@ -677,7 +686,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
-    
+
     // Fallback share method
     function fallbackShare(shareText) {
         const tempTextArea = document.createElement("textarea");
@@ -688,7 +697,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.removeChild(tempTextArea);
         alert("Meal plan copied to clipboard. You can now paste it to share.");
     }
-    
+
     // View meal plan
     function viewMealPlan(planId) {
         const plan = mealPlans.find(plan => plan.id === planId);
@@ -700,7 +709,7 @@ document.addEventListener("DOMContentLoaded", function () {
             openModal("mealPlanModal");
         }
     }
-    
+
     // Create meal plan modal content
     function createMealPlanModalContent(plan) {
         const modalContent = document.createElement("div");
@@ -711,11 +720,11 @@ document.addEventListener("DOMContentLoaded", function () {
         closeButton.innerHTML = "&times;";
         closeButton.addEventListener("click", () => closeModal("mealPlanModal"));
         modalContent.appendChild(closeButton);
-        
+
         const heading = document.createElement("h2");
         heading.textContent = plan.name;
         modalContent.appendChild(heading);
-        
+
         const table = document.createElement("table");
         table.innerHTML = `
         <thead>
@@ -733,37 +742,37 @@ document.addEventListener("DOMContentLoaded", function () {
             `).join('')}
             </tbody>
             `;
-            
-            modalContent.appendChild(table);
-            return modalContent;
-        }
 
-        // Search meal plans
-        function searchMealPlans() {
-            const query = document.getElementById("searchMealPlans").value.toLowerCase();
-            const filteredPlans = mealPlans.filter(plan => plan.name.toLowerCase().includes(query));
-            displayMealPlans(filteredPlans);
-        }
-        
-        // Export meal plans to JSON
-        function exportMealPlans() {
-            const dataStr = JSON.stringify(mealPlans);
+        modalContent.appendChild(table);
+        return modalContent;
+    }
+
+    // Search meal plans
+    function searchMealPlans() {
+        const query = document.getElementById("searchMealPlans").value.toLowerCase();
+        const filteredPlans = mealPlans.filter(plan => plan.name.toLowerCase().includes(query));
+        displayMealPlans(filteredPlans);
+    }
+
+    // Export meal plans to JSON
+    function exportMealPlans() {
+        const dataStr = JSON.stringify(mealPlans);
         const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-        
+
         const exportFileDefaultName = 'mealPlans.json';
-        
+
         const linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
     }
-    
+
     // Import meal plans from JSON
     function importMealPlans(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     const importedPlans = JSON.parse(e.target.result);
                     if (Array.isArray(importedPlans)) {
@@ -782,50 +791,71 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsText(file);
         }
     }
-    
+
     // Save meal plans to localStorage
     function saveMealPlans() {
         try {
-            //alert(JSON.stringify(mealPlans));
             localStorage.setItem("mealPlans", JSON.stringify(mealPlans));
         } catch (error) {
             console.error("Error saving meal plans:", error);
             alert("There was an error saving your meal plans. Please try again.");
         }
     }
-    
+
     // Generate unique ID
     function generateId() {
         return '_' + Math.random().toString(36).substr(2, 9);
     }
-    
+
     // Open modal
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = "block";
-        window.onclick = function (event) {
+        window.addEventListener("click", onWindowClick);
+
+        function onWindowClick(event) {
             if (event.target === modal) {
                 closeModal(modalId);
             }
-        };
+        }
     }
-    
+
     // Close modal
     function closeModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = "none";
         document.getElementById("mealPlanForm").reset();
-        window.onclick = null;
+        window.removeEventListener("click", onWindowClick);
     }
-    
+
     // Helper function to get days of the week
     function getDaysOfWeek() {
         return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     }
-    
+
     // Initialize the application
     init();
 });
+
+
+document.getElementById('fetch-user-info').onclick = function() {
+    // Retrieve logged-in user data from session storage
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+
+    if (loggedInUser) {
+        // Display user information
+        document.getElementById('user-username').textContent = loggedInUser.username || 'N/A';
+        document.getElementById('user-email').textContent = loggedInUser.email || 'N/A';
+        document.getElementById('user-password').textContent = loggedInUser.password || 'N/A'; // Ensure password handling is secure
+        document.getElementById('user-event').textContent = loggedInUser.events && loggedInUser.events.length > 0 ? loggedInUser.events.map(e => `${e.eventName} (${e.date})`).join(', ') : 'No events';
+        document.getElementById('user-notes').textContent = loggedInUser.notes && loggedInUser.notes.length > 0 ? loggedInUser.notes.join(', ') : 'No notes';
+    } else {
+        alert('No user is logged in.');
+    }
+};
+
+
+
 // window.onload = fetchUserData();
 window.onload = async function () {
     await fetchUserData();

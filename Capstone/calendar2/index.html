@@ -18,8 +18,8 @@
 
 </head>
 
-<body onload = "fetchUserData()";>
-  
+<body onload="fetchUserData()" ;>
+
   <header>
     <div class="container3">
       <h1 id="dashboard-title">Calendar<br>Quest</h1>
@@ -99,13 +99,14 @@
   </div>
 
 
-  <div id="demo" class="carousel">
+  <div id="demo" class="carousel slide" data-interval="false">
 
     <!-- Indicators -->
     <ul class="carousel-indicators">
       <li data-target="#demo" data-slide-to="0" class="active"></li>
       <li data-target="#demo" data-slide-to="1"></li>
       <li data-target="#demo" data-slide-to="2"></li>
+      <li data-target="#demo" data-slide-to="3"></li>
     </ul>
 
     <!-- The slideshow -->
@@ -126,15 +127,15 @@
 
       <div class="carousel-item">
         <div id="noteBody">
-            <div class="container">
-                <h1 class="notes">Notes</h1>
-                <textarea class="notes" id="note-input" placeholder="Type your note here..." rows="1" cols="50"></textarea>
-                <button class="notes" id="save-button">Save Note</button>
-                <div class="notes" id="notes-container"></div>
-            </div>
+          <div class="container">
+            <h1 class="notes">Notes</h1>
+            <textarea class="notes" id="note-input" placeholder="Type your note here..." rows="1" cols="50"></textarea>
+            <button class="notes" id="save-button">Save Note</button>
+            <div class="notes" id="notes-container"></div>
+          </div>
         </div>
-    </div>
-    
+      </div>
+
 
       <div class="carousel-item">
         <div id="mealBody">
@@ -197,10 +198,17 @@
       </div>
 
       <div class="carousel-item">
-        
-        <button onclick="fetchUserData()">Show Data</button>
-        <div id="userData">
 
+        <div class="divcontainer">
+          <h1>User Information</h1>
+          <button id="fetch-user-info" class="btn">Fetch User Info</button>
+          <div id="user-info" class="info">
+            <p><strong>Username:</strong> <span id="user-username"></span></p>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>Password:</strong> <span id="user-password"></span></p>
+            <p><strong>Event:</strong> <span id="user-event"></span></p>
+            <p><strong>Notes:</strong> <span id="user-notes"></span></p>
+          </div>
         </div>
 
       </div>
