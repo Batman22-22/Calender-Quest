@@ -28,25 +28,30 @@ async function addUser() {
     const newPassword = document.getElementById('newPassword').value;
     const newEmail = document.getElementById('newEmail').value;
 
-   alert(newUsername);
-    // Check if username already exists
-    const usernameExists = userData.some(user => user.username === newUsername);
+    // Check if all required fields are filled
+    if (!newUsername || !newPassword || !newEmail) {
+        alert('All fields are required.');
+        return;
+    }
 
-    // if (usernameExists(newUsername)) {
-    //     alert('Username already used');
-    //     return;
-    // }
-    // alert("new user");
+    // Check if the username or email already exists
+    const userExists = userData.some(user => user.username === newUsername || user.email === newEmail);
+    if (userExists) {
+        alert('Username or email already exists.');
+        return;
+    }
 
+    // Create new user object
     const newUser = {
         username: newUsername,
         password: newPassword,
         email: newEmail,
         events: [],
-        mealPlans: [],
-        notes: []
+        notes: [],
+        mealPlans: []
     };
 
+    // Add new user to data
     userData.push(newUser);
     await updateUserData(userData);
 
@@ -58,6 +63,7 @@ async function addUser() {
     // Redirect to the login page
     window.location.href = '/../Capstone/Login';
 }
+
 
 
 async function updateUserData(data) {
