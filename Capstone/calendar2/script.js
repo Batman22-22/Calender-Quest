@@ -218,8 +218,15 @@ $(document).ready(async function () {
 var autocompleteStart, autocompleteEnd;
 
 function initAutocomplete() {
-    autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('start'), { types: ['establishment'] });
-    autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('end'), { types: ['establishment'] });
+    autocompleteStart = new google.maps.places.Autocomplete(
+        document.getElementById('start'), { types: ['geocode'] });
+    autocompleteEnd = new google.maps.places.Autocomplete(
+        document.getElementById('end'), { types: ['geocode'] });
+
+    // Bias the autocomplete object to the user's geographical location,
+    // as supplied by the browser's 'navigator.geolocation' object.
+    autocompleteStart.setFields(['address_component']);
+    autocompleteEnd.setFields(['address_component']);
 }
 
 function initMapasync() {
@@ -229,6 +236,7 @@ function initMapasync() {
 function loadScript() {
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ep4rBtq2tecPJgVqHYS9vt6vKwFLFuE&libraries=places&callback=initMapasync';
+    script.async = true;
     script.defer = true;
     document.head.appendChild(script);
 }
@@ -295,15 +303,27 @@ document.getElementById("event-form").addEventListener("submit", async function 
     let deleteButton = document.createElement("button");
     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>'; // Using FontAwesome trash icon
     deleteButton.className = 'delete-button';
+
     deleteButton.addEventListener("click", async function () {
-        // Remove the event item when the delete button is clicked
+        // Remove the event item from the DOM
         eventItem.remove();
 
-        // Remove the event from loggedInUser.events and update JSONBin
-        loggedInUser.events = loggedInUser.events.filter(event => event.date !== eventDate);
+        // Identify the event to be deleted by its name and date
+        const eventToDelete = {
+            date: eventDate,
+            eventName: eventName
+        };
+
+        // Remove the event from loggedInUser.events based on both date and name
+        loggedInUser.events = loggedInUser.events.filter(event =>
+            !(event.date === eventToDelete.date && event.eventName === eventToDelete.eventName)
+        );
+
+        // Update JSONBin with the modified event list
         await updateUserData();
         updateSessionUserData(loggedInUser);
     });
+
 
     eventItem.appendChild(deleteButton);
 
@@ -340,21 +360,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 function renderEvents() {
-    const events = loggedInUser.events || [];
+    if (!loggedInUser || !loggedInUser.events) {
+        console.error('No events found for the logged-in user.');
+        return;
+    }
+
+    const events = loggedInUser.events;
     const eventsList = document.getElementById("events");
     eventsList.innerHTML = "";
 
-    for (const event of events) {
+    events.forEach(event => {
         const eventItem = document.createElement("li");
         const eventDetail = document.createElement("span");
         const startTime12h = formatTimeTo12H(event.startTime);
         const endTime12h = formatTimeTo12H(event.endTime);
 
-        eventDetail.innerHTML = `<b>${event.eventName}</b><br>Date: ${event.date}<br>Time: ${startTime12h} to ${endTime12h}<br>Destination: ${event.destination}<br>Duration: ${event.duration}`;
+        eventDetail.innerHTML = `<b>${event.eventName}</b><br>Date: ${event.date}<br>Time: ${event.startTime} to ${event.endTime}<br>Destination: ${event.destination}<br>Duration: ${event.duration}`;
         eventItem.appendChild(eventDetail);
 
         const deleteButton = document.createElement("button");
-        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>'; // Using FontAwesome trash icon
+        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
         deleteButton.className = 'delete-button';
         deleteButton.addEventListener("click", async function () {
             eventItem.remove();
@@ -365,8 +390,9 @@ function renderEvents() {
 
         eventItem.appendChild(deleteButton);
         eventsList.appendChild(eventItem);
-    }
+    });
 }
+
 
 //-------------------------------------------------------------------------notes----------------------------------------------------------------------------
 function displayNotes() {
@@ -838,7 +864,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-document.getElementById('fetch-user-info').onclick = function() {
+document.getElementById('fetch-user-info').onclick = function () {
     // Retrieve logged-in user data from session storage
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
 
@@ -847,11 +873,16 @@ document.getElementById('fetch-user-info').onclick = function() {
         document.getElementById('user-username').textContent = loggedInUser.username || 'N/A';
         document.getElementById('user-email').textContent = loggedInUser.email || 'N/A';
         document.getElementById('user-password').textContent = loggedInUser.password || 'N/A'; // Ensure password handling is secure
-        document.getElementById('user-event').textContent = loggedInUser.events && loggedInUser.events.length > 0 ? loggedInUser.events.map(e => `${e.eventName} (${e.date})`).join(', ') : 'No events';
-        document.getElementById('user-notes').textContent = loggedInUser.notes && loggedInUser.notes.length > 0 ? loggedInUser.notes.join(', ') : 'No notes';
+        document.getElementById('user-event').textContent = loggedInUser.events && loggedInUser.events.length > 0
+            ? loggedInUser.events.map(e => `${e.eventName} (${e.date})`).join(', ')
+            : 'No events';
+        document.getElementById('user-notes').textContent = loggedInUser.notes && loggedInUser.notes.length > 0
+            ? loggedInUser.notes.map(note => note.content).join(', ')
+            : 'No notes';
     } else {
         alert('No user is logged in.');
     }
+
 };
 
 
