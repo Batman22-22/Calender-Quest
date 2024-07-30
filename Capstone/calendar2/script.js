@@ -5,7 +5,7 @@ let userData = null;
 let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || {
     events: [],
     notes: [],
-    mealPlan: []
+    mealPlans: []
 };
 
 async function fetchUserData() {
@@ -218,10 +218,8 @@ $(document).ready(async function () {
 var autocompleteStart, autocompleteEnd;
 
 function initAutocomplete() {
-    autocompleteStart = new google.maps.places.Autocomplete(
-        document.getElementById('start'), { types: ['geocode'] });
-    autocompleteEnd = new google.maps.places.Autocomplete(
-        document.getElementById('end'), { types: ['geocode'] });
+    autocompleteStart = new google.maps.places.Autocomplete(document.getElementById('start'), { types: ['establishment'] });
+    autocompleteEnd = new google.maps.places.Autocomplete(document.getElementById('end'), { types: ['establishment'] });
 
     // Bias the autocomplete object to the user's geographical location,
     // as supplied by the browser's 'navigator.geolocation' object.
@@ -350,8 +348,21 @@ document.getElementById("event-form").addEventListener("submit", async function 
 
 // Function to convert time to 12-hour format
 function formatTimeTo12H(time) {
-    let formattedTime = new Date("2000-01-01T" + time + ":00Z").toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-    return formattedTime;
+    let [hours, minutes] = time.split(':');
+    hours = parseInt(hours);
+    let period = 'AM';
+
+    if (hours >= 12) {
+        period = 'PM';
+        if (hours > 12) hours -= 12;
+    }
+
+    if (hours === 0) {
+        hours = 12;
+    }
+    let formatedTime = `${hours}:${minutes} ${period}`;
+
+    return formatedTime;
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -392,6 +403,9 @@ function renderEvents() {
         eventsList.appendChild(eventItem);
     });
 }
+
+
+
 
 
 //-------------------------------------------------------------------------notes----------------------------------------------------------------------------

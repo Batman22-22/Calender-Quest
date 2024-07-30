@@ -82,6 +82,4 @@ var autocompleteStart, autocompleteEnd;
                 window.location.href = "../";  // Change this to your calendar page
             });
         });
-        
-
         loadScript();
