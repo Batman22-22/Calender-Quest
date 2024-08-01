@@ -44,6 +44,7 @@ async function updateUserData() {
         });
         if (response.ok) {
             console.log('Data updated successfully');
+            console.log('Updated User Data:', loggedInUser);
         } else {
             console.error('Error updating data:', response.statusText);
         }
@@ -409,6 +410,8 @@ function renderEvents() {
 
 
 //-------------------------------------------------------------------------notes----------------------------------------------------------------------------
+const MAX_NOTE_LENGTH = 200; // Set maximum length for a note
+
 function displayNotes() {
     const notesContainer = document.getElementById('notes-container');
     notesContainer.innerHTML = '';
@@ -424,8 +427,10 @@ function displayNotes() {
             const removeIcon = document.createElement('i');
             removeIcon.className = 'fas fa-trash-alt remove-icon';
             removeIcon.addEventListener('click', async function () {
+                // Remove note from UI
                 notesContainer.removeChild(noteElement);
 
+                // Remove note from loggedInUser.notes
                 const noteIndex = loggedInUser.notes.findIndex(n => n.id === note.id);
                 if (noteIndex > -1) {
                     loggedInUser.notes.splice(noteIndex, 1);
@@ -450,6 +455,11 @@ document.getElementById('save-button').addEventListener('click', async function 
     const notesContainer = document.getElementById('notes-container');
 
     if (noteInput.value.trim() !== '') {
+        if (noteInput.value.length > MAX_NOTE_LENGTH) {
+            alert(`Note is too long. Maximum length is ${MAX_NOTE_LENGTH} characters.`);
+            return;
+        }
+
         const noteId = `note${Date.now()}`; // Unique ID using timestamp
         const noteContent = noteInput.value;
 
@@ -481,8 +491,10 @@ document.getElementById('save-button').addEventListener('click', async function 
         const removeIcon = document.createElement('i');
         removeIcon.className = 'fas fa-trash-alt remove-icon';
         removeIcon.addEventListener('click', async function () {
+            // Remove note from UI
             notesContainer.removeChild(noteElement);
 
+            // Remove note from loggedInUser.notes
             const noteIndex = loggedInUser.notes.findIndex(n => n.id === noteId);
             if (noteIndex > -1) {
                 loggedInUser.notes.splice(noteIndex, 1);
@@ -505,8 +517,6 @@ document.getElementById('save-button').addEventListener('click', async function 
     }
 });
 
-
-
 //----------------------------------------------------------------meal plan------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
     let mealPlans = [];
@@ -514,23 +524,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize the application
     function init() {
-        loadMealPlans();
+        fetchUserData();
         attachEventListeners();
-        displayMealPlans();
-    }
-
-    // Load meal plans from localStorage
-    function loadMealPlans() {
-        try {
-            const storedPlans = localStorage.getItem("mealPlans");
-            if (storedPlans) {
-                mealPlans = JSON.parse(storedPlans);
-                updateNextMealPlanNumber();
-            }
-        } catch (error) {
-            console.error("Error loading meal plans:", error);
-            alert("There was an error loading your meal plans. Please try refreshing the page.");
-        }
     }
 
     // Attach event listeners
@@ -538,9 +533,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("createMealPlanBtn").addEventListener("click", openCreateModal);
         document.getElementById("surpriseMeBtn").addEventListener("click", generateSurpriseMealPlan);
         document.getElementById("saveMealPlanBtn").addEventListener("click", saveMealPlan);
-        document.getElementById("searchMealPlans").addEventListener("input", searchMealPlans);
-        document.getElementById("exportMealPlansBtn").addEventListener("click", exportMealPlans);
-        document.getElementById("importMealPlansBtn").addEventListener("change", importMealPlans);
     }
 
     // Open create modal
@@ -584,6 +576,19 @@ document.addEventListener("DOMContentLoaded", function () {
         saveMealPlans();
         displayMealPlans();
         closeModal("mealPlanModal");
+    }
+
+    // Save meal plans to localStorage and JSONBin
+    function saveMealPlans() {
+        try {
+            localStorage.setItem("mealPlans", JSON.stringify(mealPlans));
+            loggedInUser.mealPlans = mealPlans;
+            updateUserData();
+            updateSessionUserData(loggedInUser);
+        } catch (error) {
+            console.error("Error saving meal plans:", error);
+            alert("There was an error saving your meal plans. Please try again.");
+        }
     }
 
     // Generate random meal plan
@@ -787,61 +792,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return modalContent;
     }
 
-    // Search meal plans
-    function searchMealPlans() {
-        const query = document.getElementById("searchMealPlans").value.toLowerCase();
-        const filteredPlans = mealPlans.filter(plan => plan.name.toLowerCase().includes(query));
-        displayMealPlans(filteredPlans);
-    }
-
-    // Export meal plans to JSON
-    function exportMealPlans() {
-        const dataStr = JSON.stringify(mealPlans);
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-        const exportFileDefaultName = 'mealPlans.json';
-
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
-        linkElement.click();
-    }
-
-    // Import meal plans from JSON
-    function importMealPlans(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const importedPlans = JSON.parse(e.target.result);
-                    if (Array.isArray(importedPlans)) {
-                        mealPlans = importedPlans;
-                        saveMealPlans();
-                        updateNextMealPlanNumber();
-                        displayMealPlans();
-                        alert("Meal plans imported successfully!");
-                    } else {
-                        alert("Invalid file format. Please upload a valid JSON file.");
-                    }
-                } catch (error) {
-                    alert("Error importing meal plans. Please check the file format and try again.");
-                }
-            };
-            reader.readAsText(file);
-        }
-    }
-
-    // Save meal plans to localStorage
-    function saveMealPlans() {
-        try {
-            localStorage.setItem("mealPlans", JSON.stringify(mealPlans));
-        } catch (error) {
-            console.error("Error saving meal plans:", error);
-            alert("There was an error saving your meal plans. Please try again.");
-        }
-    }
-
     // Generate unique ID
     function generateId() {
         return '_' + Math.random().toString(36).substr(2, 9);
@@ -851,13 +801,14 @@ document.addEventListener("DOMContentLoaded", function () {
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = "block";
-        window.addEventListener("click", onWindowClick);
-
+        
         function onWindowClick(event) {
             if (event.target === modal) {
                 closeModal(modalId);
             }
         }
+
+        window.addEventListener("click", onWindowClick);
     }
 
     // Close modal
@@ -865,7 +816,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const modal = document.getElementById(modalId);
         modal.style.display = "none";
         document.getElementById("mealPlanForm").reset();
-        window.removeEventListener("click", onWindowClick);
+        // window.removeEventListener("click", onWindowClick);
     }
 
     // Helper function to get days of the week
@@ -876,7 +827,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the application
     init();
 });
-
 
 document.getElementById('fetch-user-info').onclick = function () {
     // Retrieve logged-in user data from session storage
@@ -896,12 +846,8 @@ document.getElementById('fetch-user-info').onclick = function () {
     } else {
         alert('No user is logged in.');
     }
-
 };
 
-
-
-// window.onload = fetchUserData();
 window.onload = async function () {
     await fetchUserData();
 
