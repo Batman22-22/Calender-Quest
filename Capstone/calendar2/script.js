@@ -525,7 +525,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the application
     function init() {
         fetchUserData();
+        displayMealPlans();
         attachEventListeners();
+    }
+
+    // Fetch user data
+    function fetchUserData() {
+        // Retrieve logged-in user data from session storage
+        loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+
+        if (loggedInUser && loggedInUser.mealPlans) {
+            mealPlans = loggedInUser.mealPlans;
+            updateNextMealPlanNumber();
+        } else {
+            mealPlans = [];
+            nextMealPlanNumber = 1;
+        }
     }
 
     // Attach event listeners
@@ -828,6 +843,7 @@ document.addEventListener("DOMContentLoaded", function () {
     init();
 });
 
+
 document.getElementById('fetch-user-info').onclick = function () {
     // Retrieve logged-in user data from session storage
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
@@ -843,6 +859,9 @@ document.getElementById('fetch-user-info').onclick = function () {
         document.getElementById('user-notes').textContent = loggedInUser.notes && loggedInUser.notes.length > 0
             ? loggedInUser.notes.map(note => note.content).join(', ')
             : 'No notes';
+        document.getElementById('user-meals').textContent = loggedInUser.mealPlans && loggedInUser.mealPlans.length > 0
+                ? loggedInUser.mealPlans.map(meal => meal.name).join(', ')
+                : 'No meal plans';
     } else {
         alert('No user is logged in.');
     }
