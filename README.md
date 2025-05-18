@@ -21,3 +21,13 @@ A simple, interactive web application that combines event scheduling, note-takin
 
 - HTML, CSS, JavaScript (Vanilla & jQuery)
 - [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript)
+## 📋 Usage
+- Click on a date to open the event modal.
+
+- Fill in the event name and time, then save.
+
+- Click "Delete" in the modal to remove an event.
+
+- Use the notes panel to write and save free-form notes.
+
+- Allow location access to see the map of your current location.
